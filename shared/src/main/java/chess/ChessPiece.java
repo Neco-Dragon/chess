@@ -62,22 +62,22 @@ public class ChessPiece {
             case KING:
                 return getKingMoves(board, myPosition);
             case QUEEN:
-                break;
+                return getQueenMoves(board, myPosition);
             case ROOK:
-                break;
+                return getRookMoves(board, myPosition);
             case BISHOP:
-                break;
+                return getBishopMoves(board, myPosition);
             case KNIGHT:
-                break;
+                return getKnightMoves(board, myPosition);
             case PAWN:
-                break;
+                return getPawnMoves(board, myPosition);
             default:
-                System.out.println("Something went wrong");
+                System.out.println("Imaginary Piece Type");
         }
         return moves;
     }
 
-    public static Collection<ChessPosition> posFromIntArray(int[][] coords){
+    public static List<ChessPosition> posFromIntArray(int[][] coords){
         List<ChessPosition> positions = new ArrayList<>();
         for (int[] coord : coords) {
             positions.add(new ChessPosition(coord[0], coord[1]));
@@ -86,17 +86,14 @@ public class ChessPiece {
     }
     public static Collection<ChessMove> getKingMoves(ChessBoard board, ChessPosition kingPosition) {
         List<ChessMove> moves = new ArrayList<>();
-        List<ChessPosition> positions = new ArrayList<>();
+        int[][] relativeKingMoves = {
+                {1, 1},  {1, 0}, {1, -1}, {0, 1},
+                {0, -1}, {-1, 1}, {-1, 0}, {-1, -1}
+        };
+        List<ChessPosition> positions = ChessPiece.posFromIntArray(relativeKingMoves);
         List<ChessPosition> newPositions = new ArrayList<>();
         ChessPiece theKing = board.getPiece(kingPosition);
-        positions.add(new ChessPosition(1, 1));
-        positions.add(new ChessPosition(1, -1));
-        positions.add(new ChessPosition(-1, 0));
-        positions.add(new ChessPosition(-1, 1));
-        positions.add(new ChessPosition(0, -1));
-        positions.add(new ChessPosition(1, 0));
-        positions.add(new ChessPosition(-1, -1));
-        positions.add(new ChessPosition(0, 1));
+
         for (ChessPosition position : positions) {
             newPositions.add(kingPosition.newRelativeChessPosition(position.getRow(), position.getColumn()));
         }
@@ -119,8 +116,26 @@ public class ChessPiece {
     }
 
     public static Collection<ChessMove> getKnightMoves(ChessBoard board, ChessPosition knightPosition) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not implemented");
+        List<ChessMove> moves = new ArrayList<>();
+        int[][] relativeKnightMoves = {
+                {1, 2}, {2, 1},
+                {-1, 2}, {2, -1},
+                {1, -2}, {-2, 1},
+                {-1, -2}, {-2, -1}
+        };
+        List<ChessPosition> positions = ChessPiece.posFromIntArray(relativeKnightMoves);
+        List<ChessPosition> newPositions = new ArrayList<>();
+        ChessPiece theKing = board.getPiece(knightPosition);
+
+        for (ChessPosition position : positions) {
+            newPositions.add(knightPosition.newRelativeChessPosition(position.getRow(), position.getColumn()));
+        }
+        for (ChessPosition position : newPositions){
+            if (!board.squareBlocked(position, theKing)){
+                moves.add(new ChessMove(knightPosition, position));
+            }
+        }
+        return moves;
     }
 
     public static Collection<ChessMove> getRookMoves(ChessBoard board, ChessPosition rookPosition) {
