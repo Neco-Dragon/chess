@@ -106,8 +106,10 @@ public class ChessPiece {
     }
 
     public static Collection<ChessMove> getQueenMoves(ChessBoard board, ChessPosition queenPosition) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not implemented");
+        List<ChessMove> moves = new ArrayList<>();
+        moves.addAll(getBishopMoves(board, queenPosition));
+        moves.addAll(getRookMoves(board, queenPosition));
+        return moves;
     }
 
     public static Collection<ChessMove> getBishopMoves(ChessBoard board, ChessPosition bishopPosition) {
@@ -192,8 +194,61 @@ public class ChessPiece {
     }
 
     public static Collection<ChessMove> getRookMoves(ChessBoard board, ChessPosition rookPosition) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not implemented");
+        List<ChessMove> moves = new ArrayList<>();
+        int[][] downMoves = {
+                {-1, 0}, {-2, 0}, {-3, 0}, {-4, 0}, {-5, 0}, {-6, 0}, {-7, 0}
+        };
+        int[][] upMoves = {
+                {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}, {6, 0}, {7, 0}
+        };
+        int[][] leftMoves = {
+                {0, -1}, {0, -2}, {0, -3}, {0, -4}, {0, -5}, {0, -6}, {0, -7}
+        };
+        int[][] rightMoves = {
+                {0, 1}, {0, 2}, {0, 3}, {0, 4}, {0, 5}, {0, 6}, {0, 7}
+        };
+        List<ChessPosition> downPositions = ChessPiece.posFromIntArray(downMoves);
+        List<ChessPosition> upPositions = ChessPiece.posFromIntArray(upMoves);
+        List<ChessPosition> leftPositions = ChessPiece.posFromIntArray(leftMoves);
+        List<ChessPosition> rightPositions = ChessPiece.posFromIntArray(rightMoves);
+        List<ChessPosition> newDownPositions = new ArrayList<>();
+        List<ChessPosition> newUpPositions = new ArrayList<>();
+        List<ChessPosition> newLeftPositions = new ArrayList<>();
+        List<ChessPosition> newRightPositions = new ArrayList<>();
+        ChessPiece theRook = board.getPiece(rookPosition);
+        for (ChessPosition position : downPositions) {
+            newDownPositions.add(rookPosition.newRelativeChessPosition(position.getRow(), position.getColumn()));
+        }
+        for (ChessPosition position : upPositions) {
+            newUpPositions.add(rookPosition.newRelativeChessPosition(position.getRow(), position.getColumn()));
+        }
+        for (ChessPosition position : leftPositions) {
+            newLeftPositions.add(rookPosition.newRelativeChessPosition(position.getRow(), position.getColumn()));
+        }
+        for (ChessPosition position : rightPositions) {
+            newRightPositions.add(rookPosition.newRelativeChessPosition(position.getRow(), position.getColumn()));
+        }
+        List<List<ChessPosition>> allMoveDirections = new ArrayList<>();
+        allMoveDirections.add(newDownPositions);
+        allMoveDirections.add(newUpPositions);
+        allMoveDirections.add(newLeftPositions);
+        allMoveDirections.add(newRightPositions);
+        for (List<ChessPosition> movesInDirection : allMoveDirections) {
+            for (ChessPosition position : movesInDirection) {
+                if (board.squareBlocked(position, theRook)) {
+                    break;
+                }
+                if (board.enemyOnSquare(position, theRook)) {
+                    moves.add(new ChessMove(rookPosition, position));
+                    break;
+                }
+                else {
+                    moves.add(new ChessMove(rookPosition, position));
+                }
+            }
+        }
+
+        return moves;
     }
 
     public static Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition pawnPosition) {
