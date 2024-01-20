@@ -104,6 +104,7 @@ public class ChessBoard {
         } else return (this.getPiece(position)).sameTeam(pieceWantingToMove); //IF Friendly Fire -> True
     }
     public boolean enemyOnSquare(ChessPosition position, ChessPiece pieceWantingToMove){
+        if (this.getPiece(position) == null) return false; //if there is no piece
         return !this.getPiece(position).sameTeam(pieceWantingToMove);
     }
 }

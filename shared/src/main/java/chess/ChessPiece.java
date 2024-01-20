@@ -111,8 +111,61 @@ public class ChessPiece {
     }
 
     public static Collection<ChessMove> getBishopMoves(ChessBoard board, ChessPosition bishopPosition) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not implemented");
+        List<ChessMove> moves = new ArrayList<>();
+        int[][] diagonalUpLeftMoves = {
+                {-1, 1}, {-2, 2}, {-3, 3}, {-4, 4}, {-5, 5}, {-6, 6}, {-7, 7}
+        };
+        int[][] diagonalDownLeftMoves = {
+                {-1, -1}, {-2, -2}, {-3, -3}, {-4, -4}, {-5, -5}, {-6, -6}, {-7, -7}
+        };
+        int[][] diagonalDownRightMoves = {
+                {1, -1}, {2, -2}, {3, -3}, {4, -4}, {5, -5}, {6, -6}, {7, -7}
+        };
+        int[][] diagonalUpRightMoves = {
+                {1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}, {7, 7}
+        };
+        List<ChessPosition> diagonalUpLeftMovesPositions = ChessPiece.posFromIntArray(diagonalUpLeftMoves);
+        List<ChessPosition> diagonalDownRightMovesPositions = ChessPiece.posFromIntArray(diagonalDownRightMoves);
+        List<ChessPosition> diagonalDownLeftMovesPositions = ChessPiece.posFromIntArray(diagonalDownLeftMoves);
+        List<ChessPosition> diagonalUpRightMovesPositions = ChessPiece.posFromIntArray(diagonalUpRightMoves);
+        List<ChessPosition> newDiagonalDownRightMovesPositions = new ArrayList<>();
+        List<ChessPosition> newDiagonalDownLeftMovesPositions = new ArrayList<>();
+        List<ChessPosition> newDiagonalUpRightMovesPositions = new ArrayList<>();
+        List<ChessPosition> newDiagonalUpLeftMovesPositions = new ArrayList<>();
+        ChessPiece theBishop = board.getPiece(bishopPosition);
+        for (ChessPosition position : diagonalUpLeftMovesPositions) {
+            newDiagonalUpLeftMovesPositions.add(bishopPosition.newRelativeChessPosition(position.getRow(), position.getColumn()));
+        }
+        for (ChessPosition position : diagonalDownRightMovesPositions) {
+            newDiagonalDownRightMovesPositions.add(bishopPosition.newRelativeChessPosition(position.getRow(), position.getColumn()));
+        }
+        for (ChessPosition position : diagonalDownLeftMovesPositions) {
+            newDiagonalDownLeftMovesPositions.add(bishopPosition.newRelativeChessPosition(position.getRow(), position.getColumn()));
+        }
+        for (ChessPosition position : diagonalUpRightMovesPositions) {
+            newDiagonalUpRightMovesPositions.add(bishopPosition.newRelativeChessPosition(position.getRow(), position.getColumn()));
+        }
+        List<List<ChessPosition>> allMoveDirections = new ArrayList<>();
+        allMoveDirections.add(newDiagonalUpLeftMovesPositions);
+        allMoveDirections.add(newDiagonalDownRightMovesPositions);
+        allMoveDirections.add(newDiagonalDownLeftMovesPositions);
+        allMoveDirections.add(newDiagonalUpRightMovesPositions);
+        for (List<ChessPosition> movesInDirection : allMoveDirections) {
+            for (ChessPosition position : movesInDirection) {
+                if (board.squareBlocked(position, theBishop)) {
+                    break;
+                }
+                if (board.enemyOnSquare(position, theBishop)) {
+                    moves.add(new ChessMove(bishopPosition, position));
+                    break;
+                }
+                else {
+                    moves.add(new ChessMove(bishopPosition, position));
+                }
+            }
+        }
+
+        return moves;
     }
 
     public static Collection<ChessMove> getKnightMoves(ChessBoard board, ChessPosition knightPosition) {
@@ -125,13 +178,13 @@ public class ChessPiece {
         };
         List<ChessPosition> positions = ChessPiece.posFromIntArray(relativeKnightMoves);
         List<ChessPosition> newPositions = new ArrayList<>();
-        ChessPiece theKing = board.getPiece(knightPosition);
+        ChessPiece theKnight = board.getPiece(knightPosition);
 
         for (ChessPosition position : positions) {
             newPositions.add(knightPosition.newRelativeChessPosition(position.getRow(), position.getColumn()));
         }
         for (ChessPosition position : newPositions){
-            if (!board.squareBlocked(position, theKing)){
+            if (!board.squareBlocked(position, theKnight)){
                 moves.add(new ChessMove(knightPosition, position));
             }
         }
