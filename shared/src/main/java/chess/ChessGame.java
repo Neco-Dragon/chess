@@ -95,11 +95,14 @@ public class ChessGame {
     }
 
     public Collection<ChessMove> allValidMoves(TeamColor teamColor) {
-        HashSet<ChessMove> allMoves = new HashSet<ChessMove>();
+        HashSet<ChessMove> allMoves = new HashSet<>();
         for (int i = 0; i < 8; i++){
             for (int j = 0; i < 8; i++){
                 ChessPosition thisSquare = new ChessPosition(i, j);
-                allMoves.addAll(board.getPiece(thisSquare).pieceMoves(board, thisSquare));
+                //If it's that piece's team's turn
+                if (board.getPiece(thisSquare).getTeamColor().equals(teamColor)) {
+                    allMoves.addAll(board.getPiece(thisSquare).pieceMoves(board, thisSquare));
+                }
             }
         }
         return allMoves;
