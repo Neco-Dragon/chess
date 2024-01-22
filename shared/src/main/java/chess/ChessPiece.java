@@ -5,6 +5,7 @@ import com.sun.jdi.Value;
 import javax.swing.text.Position;
 import java.util.*;
 
+import static chess.ChessGame.TeamColor.BLACK;
 import static chess.ChessGame.TeamColor.WHITE;
 
 /**
@@ -252,8 +253,79 @@ public class ChessPiece {
     }
 
     public static Collection<ChessMove> getPawnMoves(ChessBoard board, ChessPosition pawnPosition) {
-        // TODO: implement
-        throw new UnsupportedOperationException("Not implemented");
+        List<ChessMove> moves = new ArrayList<>();
+        ChessPiece thePawn = board.getPiece(pawnPosition);
+        int [][] regularMoves;
+        int [][] captureMoves;
+
+        if (thePawn.getTeamColor() == WHITE){
+            captureMoves = new int[][]{{1,1}, {1,-1}};
+            if (ChessPiece.onStartingSquare(thePawn, pawnPosition)){
+                regularMoves = new int[][]{{1, 0}, {2, 0}};
+            }
+            else{
+                regularMoves = new int[][]{{1, 0}};
+            }
+        }
+        else{ //Pawn is Black
+            captureMoves = new int[][]{{-1,1}, {-1,-1}};
+            if (ChessPiece.onStartingSquare(thePawn, pawnPosition)){
+                regularMoves = new int[][]{{-1, 0}, {-2, 0}};
+            }
+            else{
+                regularMoves = new int[][]{{-1, 0}};
+            }
+        }
+
+        List<ChessPosition> capturePositions = ChessPiece.posFromIntArray(captureMoves);
+        List<ChessPosition> regularPositions = ChessPiece.posFromIntArray(regularMoves);
+        List<ChessPosition> newCapturePositions = new ArrayList<>();
+        List<ChessPosition> newRegularPositions = new ArrayList<>();
+        List<ChessPosition> finalPositions = new ArrayList<>();
+
+        for (ChessPosition capturePosition : capturePositions) {
+            newCapturePositions.add(capturePosition.newRelativeChessPosition(pawnPosition.getRow(), pawnPosition.getColumn()));
+        }
+        for (ChessPosition regularPosition : regularPositions) {
+            newRegularPositions.add(regularPosition.newRelativeChessPosition(pawnPosition.getRow(), pawnPosition.getColumn()));
+        }
+
+
+        for (ChessPosition capturePosition : newCapturePositions) {
+            if (board.enemyOnSquare(capturePosition, thePawn)){
+                finalPositions.add(capturePosition);
+            }
+        }
+        for (ChessPosition regularPosition : newRegularPositions) {
+            if (board.squareBlocked(regularPosition, thePawn) || board.enemyOnSquare(regularPosition, thePawn)) {
+                break;
+            }
+            else {finalPositions.add(regularPosition);}
+        }
+
+        if (onPromotionSquare(thePawn, pawnPosition)){
+            for (ChessPosition finalPosition : finalPositions) {
+                moves.add(new ChessMove(pawnPosition, finalPosition, PieceType.QUEEN));
+                moves.add(new ChessMove(pawnPosition, finalPosition, PieceType.BISHOP));
+                moves.add(new ChessMove(pawnPosition, finalPosition, PieceType.KNIGHT));
+                moves.add(new ChessMove(pawnPosition, finalPosition, PieceType.ROOK));
+            }
+
+        }
+        else {
+            for (ChessPosition finalPosition : finalPositions) {
+                moves.add(new ChessMove(pawnPosition, finalPosition));
+            }
+        }
+        return moves;
+    }
+
+    private static boolean onStartingSquare(ChessPiece pawn, ChessPosition pawnPosition){
+        return ((pawn.getTeamColor()==WHITE && pawnPosition.getRow() == 2) || (pawn.getTeamColor()==BLACK && pawnPosition.getRow() == 7));
+    }
+    /**@return returns true if the given pawn at its current given position is on the 7th or 2nd rank, just before promotion*/
+    private static boolean onPromotionSquare(ChessPiece pawn, ChessPosition pawnPosition){
+        return ((pawn.getTeamColor()==WHITE && pawnPosition.getRow() == 7) || (pawn.getTeamColor()==BLACK && pawnPosition.getRow() == 2));
     }
 
 

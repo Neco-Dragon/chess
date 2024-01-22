@@ -98,7 +98,7 @@ public class ChessBoard {
     public boolean squareBlocked(ChessPosition position, ChessPiece pieceWantingToMove){
         if (position.getRow() > 8 || position.getColumn() > 8 || position.getRow() < 1 || position.getColumn() < 1) { //IF square Out of Bounds
             return true;
-        } else //If Friendly Fire
+        } else
             if (this.getPiece(position) == null) { //IF Square is empty
             return false;
         } else return (this.getPiece(position)).sameTeam(pieceWantingToMove); //IF Friendly Fire -> True
