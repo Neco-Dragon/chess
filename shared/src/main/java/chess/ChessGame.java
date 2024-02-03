@@ -103,7 +103,6 @@ public class ChessGame {
         for (int i = 0; i < 8; i++){
             for (int j = 0; i < 8; i++){
                 ChessPosition thisSquare = new ChessPosition(i, j);
-                //If it's that piece's team's turn
                 if (board.getPiece(thisSquare).sameTeam(teamColor)) {
                     allMoves.addAll(board.getPiece(thisSquare).pieceMoves(board, thisSquare));
                 }
@@ -111,6 +110,24 @@ public class ChessGame {
         }
         return allMoves;
         //call validMoves() on each piece of that team color
+    }
+    /**
+     *
+     *
+     * @param teamColor which team to check moves for
+     * @return All moves, irrespective of whether they cause a king to be left in danger
+     */
+    public Collection<ChessMove> allPossibleMoves(TeamColor teamColor) {
+        HashSet<ChessMove> allMoves = new HashSet<>();
+        for (int i = 0; i < 8; i++){
+            for (int j = 0; i < 8; i++){
+                ChessPosition thisSquare = new ChessPosition(i, j);
+                if (board.getPiece(thisSquare).sameTeam(teamColor)) {
+                    allMoves.addAll(board.getPiece(thisSquare).pieceMoves(board, thisSquare));
+                }
+            }
+        }
+        return allMoves;
     }
 
     /**
