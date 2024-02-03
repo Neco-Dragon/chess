@@ -130,7 +130,7 @@ public class ChessGame {
     public Collection<ChessMove> allPossibleMoves(TeamColor teamColor) {
         HashSet<ChessMove> allMoves = new HashSet<>();
         for (int i = 1; i <= 8; i++){
-            for (int j = 1; i <= 8; i++){
+            for (int j = 1; j <= 8; j++){
                 ChessPosition thisSquare = new ChessPosition(i, j);
                 if (!board.isSquareEmpty(thisSquare)
                         && board.getPiece(thisSquare).sameTeam(teamColor)) {
