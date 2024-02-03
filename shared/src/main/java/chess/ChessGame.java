@@ -80,13 +80,17 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        ChessPiece myPiece = board.getPiece(move.getStartPosition());
         if (move.getStartPosition().posOutOfBounds() || move.getEndPosition().posOutOfBounds()){
             throw new InvalidMoveException("Move is out of bounds");
         }
-        else if (board.isSquareEmpty(move.getStartPosition())){
+        else if (myPiece == null){
             throw new InvalidMoveException("No piece on that square");
         }
-        else if (!allValidMoves(board.getPiece(move.getStartPosition()).getTeamColor()).contains(move)){
+        else if (myPiece.getTeamColor() != getTeamTurn()) {
+            throw new InvalidMoveException("It's not your turn!");
+        }
+        else if (!allValidMoves(myPiece.getTeamColor()).contains(move)){
             throw new InvalidMoveException("Illegal Move");
         }
         else makeMoveByForce(move);
@@ -102,6 +106,7 @@ public class ChessGame {
         this.board.addPiece(move.getEndPosition(), this.board.getPiece(move.getStartPosition()));
         this.board.removePiece(move.getStartPosition()); //after the piece gets added, there's a copy of it, so this deletes the copy from the old square
         //here we are not worried about promotions, just making sure there is a physical blockade of the right color on the square
+        teamTurn = getEnemyTeam(board.getPiece(move.getEndPosition()).getTeamColor()); //switch who's turn it is
     }
 
     /**

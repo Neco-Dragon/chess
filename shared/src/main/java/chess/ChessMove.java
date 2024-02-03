@@ -14,7 +14,8 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return "Mov{" + endPosition.getRow() + ", " + endPosition.getColumn() + "}";
+        return "Mov{" + startPosition.getRow() + "," + startPosition.getColumn() + "}->" +
+                "{" + endPosition.getRow() + ", " + endPosition.getColumn() + "}";
     }
 
     private ChessPiece.PieceType promotionPiece;
