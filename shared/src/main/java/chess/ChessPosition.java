@@ -52,4 +52,8 @@ public class ChessPosition {
     public int hashCode() {
         return Objects.hash(row, col);
     }
+
+    public boolean posOutOfBounds(){
+        return (this.getRow() > 8 || this.getColumn() > 8 || this.getRow() < 1 || this.getColumn() < 1);
+    }
 }

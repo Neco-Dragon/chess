@@ -80,7 +80,16 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        ChessBoard hypothetical = this.board;
+        if (move.getStartPosition().posOutOfBounds() || move.getEndPosition().posOutOfBounds()){
+            throw new InvalidMoveException("Move is out of bounds");
+        }
+        else if (board.isSquareEmpty(move.getStartPosition())){
+            throw new InvalidMoveException("No piece on that square");
+        }
+        else if (allValidMoves(board.getPiece(move.getStartPosition()).getTeamColor()).isEmpty()){
+            throw new InvalidMoveException("Illegal Move");
+        }
+        else makeMoveByForce(move);
     }
 
     /**
