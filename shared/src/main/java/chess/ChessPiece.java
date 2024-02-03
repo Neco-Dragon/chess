@@ -14,11 +14,15 @@ import static chess.ChessGame.TeamColor.WHITE;
  * signature of the existing methods.
  */
 public class ChessPiece {
-    private final PieceType piece;
+    private PieceType piece;
     private final ChessGame.TeamColor team;
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         team = pieceColor;
         piece = type;
+    }
+
+    public void setPieceType(PieceType promotionPiece) {
+        piece = promotionPiece;
     }
 
     /**

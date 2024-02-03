@@ -105,7 +105,10 @@ public class ChessGame {
     public void makeMoveByForce(ChessMove move) {
         this.board.addPiece(move.getEndPosition(), this.board.getPiece(move.getStartPosition()));
         this.board.removePiece(move.getStartPosition()); //after the piece gets added, there's a copy of it, so this deletes the copy from the old square
-        //here we are not worried about promotions, just making sure there is a physical blockade of the right color on the square
+        //If it's a promoting pawn...
+        if (move.getPromotionPiece() != null){
+            this.board.getPiece(move.getEndPosition()).setPieceType(move.getPromotionPiece());
+        }
         teamTurn = getEnemyTeam(board.getPiece(move.getEndPosition()).getTeamColor()); //switch who's turn it is
     }
 
