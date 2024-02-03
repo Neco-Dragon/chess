@@ -40,6 +40,10 @@ public class ChessGame {
         BLACK
     }
 
+    public static TeamColor getEnemyTeam(TeamColor teamColor){
+        return teamColor.equals(TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+    }
+
     /**
      * Gets a valid moves for a piece at the given location
      *
@@ -61,7 +65,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        ChessBoard hypothetical = this.clone();
+        ChessBoard hypothetical = this.board;
     }
 
     /**
@@ -71,10 +75,16 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        for (move : allValidMoves(teamColor) {
-            ChessPiece pieceOnDestinationSquare = board.
-            if (piece)
+        //since you can never capture your own piece, we only need to check if the final destination
+        // HAS a piece and if that piece is a king
+        for (ChessMove move : allPossibleMoves(getEnemyTeam(teamColor))){
+            ChessPiece pieceOnDestinationSquare = this.board.getPiece(move.getEndPosition());
+            if (pieceOnDestinationSquare == null) {continue;}
+            else if (pieceOnDestinationSquare.getPieceType() == ChessPiece.PieceType.KING){
+                return true;
+            }
         }
+        return false;
 //        check all end positions of all valid moves of the other team
 //        if the end position and the King's location are the same, return True
     }
@@ -100,8 +110,8 @@ public class ChessGame {
 
     public Collection<ChessMove> allValidMoves(TeamColor teamColor) {
         HashSet<ChessMove> allMoves = new HashSet<>();
-        for (int i = 0; i < 8; i++){
-            for (int j = 0; i < 8; i++){
+        for (int i = 1; i <= 8; i++){
+            for (int j = 1; i <= 8; i++){
                 ChessPosition thisSquare = new ChessPosition(i, j);
                 if (board.getPiece(thisSquare).sameTeam(teamColor)) {
                     allMoves.addAll(board.getPiece(thisSquare).pieceMoves(board, thisSquare));
@@ -119,10 +129,11 @@ public class ChessGame {
      */
     public Collection<ChessMove> allPossibleMoves(TeamColor teamColor) {
         HashSet<ChessMove> allMoves = new HashSet<>();
-        for (int i = 0; i < 8; i++){
-            for (int j = 0; i < 8; i++){
+        for (int i = 1; i <= 8; i++){
+            for (int j = 1; i <= 8; i++){
                 ChessPosition thisSquare = new ChessPosition(i, j);
-                if (board.getPiece(thisSquare).sameTeam(teamColor)) {
+                if (!board.isSquareEmpty(thisSquare)
+                        && board.getPiece(thisSquare).sameTeam(teamColor)) {
                     allMoves.addAll(board.getPiece(thisSquare).pieceMoves(board, thisSquare));
                 }
             }
