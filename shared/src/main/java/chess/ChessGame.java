@@ -57,7 +57,7 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        ArrayList<ChessMove> myMoves = new ArrayList<>();
+        HashSet<ChessMove> myMoves = new HashSet<>();
         ChessPiece myPiece = this.board.getPiece(startPosition);
         if (myPiece == null) {return null;}
         for (ChessMove move : myPiece.pieceMoves(this.board, startPosition)){
@@ -87,7 +87,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMoveByForce(ChessMove move) {
-        ChessBoard hypothetical = this.board;
+        this.board.addPiece(move.getEndPosition(), this.board.getPiece(move.getStartPosition()));
+        this.board.removePiece(move.getStartPosition()); //after the piece gets added, there's a copy of it, so this deletes the copy from the old square
+        //here we are not worried about promotions, just making sure there is a physical blockade of the right color on the square
     }
 
     /**
