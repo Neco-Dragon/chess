@@ -86,7 +86,7 @@ public class ChessGame {
         else if (board.isSquareEmpty(move.getStartPosition())){
             throw new InvalidMoveException("No piece on that square");
         }
-        else if (allValidMoves(board.getPiece(move.getStartPosition()).getTeamColor()).isEmpty()){
+        else if (!allValidMoves(board.getPiece(move.getStartPosition()).getTeamColor()).contains(move)){
             throw new InvalidMoveException("Illegal Move");
         }
         else makeMoveByForce(move);
@@ -147,7 +147,7 @@ public class ChessGame {
     public Collection<ChessMove> allValidMoves(TeamColor teamColor) {
         HashSet<ChessMove> allMoves = new HashSet<>();
         for (int i = 1; i <= 8; i++){
-            for (int j = 1; i <= 8; i++){
+            for (int j = 1; j <= 8; j++){
                 ChessPosition thisSquare = new ChessPosition(i, j);
                 if (!getBoard().isSquareEmpty(thisSquare)
                         && board.getPiece(thisSquare).sameTeam(teamColor)) {
