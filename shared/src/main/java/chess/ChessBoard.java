@@ -55,6 +55,9 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
+        if (position.posOutOfBounds()){
+            return null;
+        }
         return board[position.getRow() - 1][position.getColumn() - 1];
     }
 
