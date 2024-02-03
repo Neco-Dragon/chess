@@ -52,7 +52,7 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if (this.board.getPiece(startPosition) == null) {return null;}
+        if (this.board.isSquareEmpty(startPosition)) {return null;}
         else {
             return this.board.getPiece(startPosition).pieceMoves(this.board, startPosition);
         }
@@ -114,12 +114,11 @@ public class ChessGame {
             for (int j = 1; i <= 8; i++){
                 ChessPosition thisSquare = new ChessPosition(i, j);
                 if (board.getPiece(thisSquare).sameTeam(teamColor)) {
-                    allMoves.addAll(board.getPiece(thisSquare).pieceMoves(board, thisSquare));
+                    allMoves.addAll(allValidMoves(teamColor));
                 }
             }
         }
         return allMoves;
-        //call validMoves() on each piece of that team color
     }
     /**
      *
