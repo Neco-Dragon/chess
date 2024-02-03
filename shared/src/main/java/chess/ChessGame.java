@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -14,6 +15,10 @@ public class ChessGame {
     private ChessBoard board;
     public ChessGame() {
         this.board = new ChessBoard();
+    }
+
+    public ChessGame(ChessBoard boardState) {
+        this.board = boardState;
     }
 
     /**
@@ -52,10 +57,17 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        if (this.board.isSquareEmpty(startPosition)) {return null;}
-        else {
-            return this.board.getPiece(startPosition).pieceMoves(this.board, startPosition);
+        ArrayList<ChessMove> myMoves = new ArrayList<>();
+        ChessPiece myPiece = this.board.getPiece(startPosition);
+        if (myPiece == null) {return null;}
+        for (ChessMove move : myPiece.pieceMoves(this.board, startPosition)){
+            ChessGame hypotheticalGame = new ChessGame(this.board); // I wish IsInCheck was on the Board Class
+            hypotheticalGame.makeMoveByForce(move); //Suppose we make a proposed move...
+            if (!hypotheticalGame.isInCheck(myPiece.getTeamColor())){ //if I don't put myself in check, it's valid
+                myMoves.add(move);
+            }
         }
+        return myMoves;
     }
 
     /**
@@ -65,6 +77,16 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        ChessBoard hypothetical = this.board;
+    }
+
+    /**
+     * Makes a move in a chess game, regardless of whether it's legal. Will stomp on other piece pointers
+     *
+     * @param move chess move to perform
+     * @throws InvalidMoveException if move is invalid
+     */
+    public void makeMoveByForce(ChessMove move) {
         ChessBoard hypothetical = this.board;
     }
 
