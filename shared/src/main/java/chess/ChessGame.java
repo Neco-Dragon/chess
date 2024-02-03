@@ -140,8 +140,9 @@ public class ChessGame {
         for (int i = 1; i <= 8; i++){
             for (int j = 1; i <= 8; i++){
                 ChessPosition thisSquare = new ChessPosition(i, j);
-                if (board.getPiece(thisSquare).sameTeam(teamColor)) {
-                    allMoves.addAll(allValidMoves(teamColor));
+                if (!getBoard().isSquareEmpty(thisSquare)
+                        && board.getPiece(thisSquare).sameTeam(teamColor)) {
+                    allMoves.addAll(validMoves(thisSquare));
                 }
             }
         }
