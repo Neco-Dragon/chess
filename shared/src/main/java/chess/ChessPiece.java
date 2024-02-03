@@ -2,7 +2,6 @@ package chess;
 
 import com.sun.jdi.Value;
 
-import javax.swing.text.Position;
 import java.util.*;
 
 import static chess.ChessGame.TeamColor.BLACK;
@@ -352,5 +351,6 @@ public class ChessPiece {
     }
 
     public boolean sameTeam(ChessPiece piece) {return piece.getTeamColor() == this.getTeamColor();}
+    public boolean sameTeam(ChessGame.TeamColor color) {return this.getTeamColor() == color;}
 
 }

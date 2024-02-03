@@ -48,7 +48,10 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        return this.board.getPiece(startPosition).pieceMoves(this.board, startPosition);
+        if (this.board.getPiece(startPosition) == null) {return null;}
+        else {
+            return this.board.getPiece(startPosition).pieceMoves(this.board, startPosition);
+        }
     }
 
     /**
@@ -58,7 +61,7 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessBoard hypothetical = this.clone();
     }
 
     /**
@@ -67,12 +70,13 @@ public class ChessGame {
      * @param teamColor which team to check for check
      * @return True if the specified team is in check
      */
-    public boolean isInCheck(TeamColor teamColor) { return true;
-//        for (move : allValidMoves(teamColor) {
-//            if move.getEndPosition().getPiece().equals(new ChessPiece(TeamColor.WHITE, ChessPiece.PieceType.KING));
-//        }
-        //check all end positions of all valid moves of the other team
-        //if the end position and the King's location are the same, return True
+    public boolean isInCheck(TeamColor teamColor) {
+        for (move : allValidMoves(teamColor) {
+            ChessPiece pieceOnDestinationSquare = board.
+            if (piece)
+        }
+//        check all end positions of all valid moves of the other team
+//        if the end position and the King's location are the same, return True
     }
 
     /**
@@ -100,7 +104,7 @@ public class ChessGame {
             for (int j = 0; i < 8; i++){
                 ChessPosition thisSquare = new ChessPosition(i, j);
                 //If it's that piece's team's turn
-                if (board.getPiece(thisSquare).getTeamColor().equals(teamColor)) {
+                if (board.getPiece(thisSquare).sameTeam(teamColor)) {
                     allMoves.addAll(board.getPiece(thisSquare).pieceMoves(board, thisSquare));
                 }
             }
