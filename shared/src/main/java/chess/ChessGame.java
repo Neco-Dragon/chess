@@ -1,5 +1,7 @@
 package chess;
 
+import jdk.jshell.spi.ExecutionControl;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -18,7 +20,8 @@ public class ChessGame {
     }
 
     public ChessGame(ChessBoard boardState) {
-        this.board = boardState;
+        this.board = new ChessBoard();
+        this.board.copyBoardState(boardState);
     }
 
     /**
@@ -61,8 +64,8 @@ public class ChessGame {
         ChessPiece myPiece = this.board.getPiece(startPosition);
         if (myPiece == null) {return null;}
         for (ChessMove move : myPiece.pieceMoves(this.board, startPosition)){
-            ChessGame hypotheticalGame = new ChessGame(this.board); // I wish IsInCheck was on the Board Class
-            hypotheticalGame.makeMoveByForce(move); //Suppose we make a proposed move...
+            ChessGame hypotheticalGame = new ChessGame(board); //make a new hypothetical chess game
+            hypotheticalGame.makeMoveByForce(move); //make a move on our hypothetical board
             if (!hypotheticalGame.isInCheck(myPiece.getTeamColor())){ //if I don't put myself in check, it's valid
                 myMoves.add(move);
             }
@@ -177,4 +180,8 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {return this.board;}
+
+    public ChessGame deepCopy(){
+        return null;
+    }
 }

@@ -91,6 +91,21 @@ public class ChessBoard {
         this.board[7][7] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
     }
 
+    /**
+     * Allows us to set the board with new pointers to each object
+     */
+    public void copyBoardState(ChessBoard myBoard){ //This is used for making a deepcopy of a board
+        for (int i = 0; i < board.length; i++){
+            for (int j = 0; j < board.length; j++){
+                ChessPiece pieceOnSquare = myBoard.getPiece(new ChessPosition(i+1,j+1));
+                if (pieceOnSquare == null){this.board[i][j] = null;}
+                else { //it is essential that we create a new pointer here, otherwise input board is changed at the same time
+                    this.board[i][j] = new ChessPiece(pieceOnSquare.getTeamColor(), pieceOnSquare.getPieceType());
+                }
+            }
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder OUT = new StringBuilder();
@@ -120,4 +135,13 @@ public class ChessBoard {
         if (this.getPiece(position) == null) return false; //if there is no piece
         return !this.getPiece(position).sameTeam(pieceWantingToMove);
     }
+
+    public ChessPiece[][] copy() {
+        ChessPiece[][] copy = new ChessPiece[board.length][];
+        for (int i = 0; i < board.length; i++) {
+            copy[i] = Arrays.copyOf(board[i], board[i].length);
+        }
+        return copy;
+    }
+
 }
