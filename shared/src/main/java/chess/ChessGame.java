@@ -139,7 +139,8 @@ public class ChessGame {
      * @param teamColor which team to check for checkmate
      * @return True if the specified team is in checkmate
      */
-    public boolean isInCheckmate(TeamColor teamColor) { return isInStalemate(teamColor) && isInCheck(teamColor);}
+    public boolean isInCheckmate(TeamColor teamColor) {
+        return isInStalemate(teamColor) && isInCheck(teamColor);}
 
     /**
      * Determines if the given team is in stalemate, which here is defined as having
