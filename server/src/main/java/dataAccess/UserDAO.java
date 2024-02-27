@@ -1,6 +1,5 @@
 package dataAccess;
 
-import model.AuthData;
 import model.UserData;
 
 public interface UserDAO {
@@ -10,7 +9,9 @@ public interface UserDAO {
      */
     void clear() throws DataAccessException;
 
-    /**Creates a new user with provided user data.
+    /**
+     * Creates a new user with provided user data.
+     *
      * @param userData the user data to create
      * @return the Auth token (with other data) associated with the created user
      * @throws DataAccessException if an error occurs during data access

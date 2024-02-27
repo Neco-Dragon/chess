@@ -54,5 +54,6 @@ public interface GameDAO {
      * @param clientUsername username of the client, which will be added into the given color's username parameter
      */
 
-    void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws DataNotFoundException;
+    void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws DataNotFoundException, DataAccessException;
+    int generateNewGameID();
 }

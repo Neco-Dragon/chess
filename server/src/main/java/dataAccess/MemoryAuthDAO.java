@@ -3,6 +3,7 @@ package dataAccess;
 import model.AuthData;
 
 import java.util.HashMap;
+import java.util.Random;
 
 public class MemoryAuthDAO implements AuthDAO{
     /**
@@ -15,7 +16,7 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public AuthData createAuth(AuthData authData) throws DataAccessException {
+    public AuthData insertAuth(AuthData authData) throws DataAccessException {
         if (fakeAuthTokenDatabase.get(authData.authToken()) != null){
             throw new DataAccessException("Auth Token already exists");
         }
@@ -32,17 +33,30 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public void deleteAuth(AuthData authData) throws DataAccessException, DataNotFoundException {
-        if (fakeAuthTokenDatabase.get(authData.authToken()) == null){
+    public void deleteAuth(String authToken) throws DataAccessException, DataNotFoundException {
+        if (fakeAuthTokenDatabase.get(authToken) == null){
             throw new DataNotFoundException("No such Auth token exists");
         }
-        fakeAuthTokenDatabase.remove(authData.authToken());
+        fakeAuthTokenDatabase.remove(authToken);
     }
 
     @Override
-    public void confirmAuth(AuthData authData) throws DataAccessException, DataAccessUnauthorizedException {
-        if (fakeAuthTokenDatabase.get(authData.authToken()) == null){
+    public void confirmAuth(String authToken) throws DataAccessException, DataAccessUnauthorizedException {
+        if (fakeAuthTokenDatabase.get(authToken) == null){
             throw new DataAccessUnauthorizedException("auth token not found in database");
         }
+    }
+
+    @Override
+    public String getUsername(String authToken) throws DataAccessException, DataNotFoundException, DataAccessUnauthorizedException {
+        confirmAuth(authToken);
+        return fakeAuthTokenDatabase.get(authToken).username();
+    }
+
+
+    public String generateAuthToken(String username){
+        //"Now that's what I call hashing"
+        Random random = new Random();
+        return Integer.toHexString(random.nextInt());
     }
 }

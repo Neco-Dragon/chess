@@ -63,16 +63,30 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws DataNotFoundException{
+    public void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws DataNotFoundException, DataAccessException {
         GameData myGame = fakeGameDatabase.get(gameID);
         GameData myNewGame;
+        if (myGame == null){
+            throw new DataNotFoundException("No such gameID exists");
+        }
         //since records are immutable, we will overwrite it with new information
         if (clientColor == ChessGame.TeamColor.WHITE){
+            if (myGame.whiteUsername() != null){
+                throw new DataAccessException("There can only be one player for the white pieces");
+            }
             myNewGame = new GameData(gameID, clientUsername, myGame.blackUsername(), myGame.gameName(), myGame.game());
         }
         else {
+            if (myGame.blackUsername() != null){
+                throw new DataAccessException("There can only be one player for the black pieces");
+            }
             myNewGame = new GameData(gameID, myGame.whiteUsername(), clientUsername, myGame.gameName(), myGame.game());
         }
         fakeGameDatabase.put(gameID, myNewGame);
+    }
+
+    @Override
+    public int generateNewGameID() {
+        return fakeGameDatabase.size() + 1;
     }
 }

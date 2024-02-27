@@ -14,7 +14,7 @@ public interface AuthDAO {
      * @return the created Auth data
      * @throws DataAccessException if an error occurs during data access
      */
-    AuthData createAuth(AuthData authData) throws DataAccessException;
+    AuthData insertAuth(AuthData authData) throws DataAccessException;
 
     /**Gets Auth data based on provided Auth information.
      * @param authData the Auth data to get
@@ -28,12 +28,14 @@ public interface AuthDAO {
      * @param authData the Auth data to delete
      * @throws DataAccessException if an error occurs during data access
      */
-    void deleteAuth(AuthData authData) throws DataAccessException, DataNotFoundException;
+    void deleteAuth(String authToken) throws DataAccessException, DataNotFoundException;
 
     /**Confirms Auth data.
      * @param authData the Auth data to confirm
      * @throws DataAccessException if an error occurs during data access
      */
-    void confirmAuth(AuthData authData) throws DataAccessException, DataAccessUnauthorizedException;
+    void confirmAuth(String authToken) throws DataAccessException, DataAccessUnauthorizedException;
+    String getUsername(String authToken) throws DataAccessException, DataNotFoundException, DataAccessUnauthorizedException;
+    public String generateAuthToken(String username);
 
 }
