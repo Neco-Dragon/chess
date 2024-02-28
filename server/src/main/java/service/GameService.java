@@ -18,12 +18,12 @@ public class GameService {
         this.gameDAO = gameDAO;
     }
 
-    public void joinGame(JoinGameRequest request) throws DataNotFoundException, DataAccessException, DataAccessUnauthorizedException {
+    public void joinGame(JoinGameRequest request) throws BadRequestException, DataAccessException, UnauthorizedException {
 
         gameDAO.joinGame(request.gameID(), request.playerColor(), authDAO.getUsername(request.authToken()));
     }
 
-    public InsertGameResult insertGame(InsertGameRequest request) throws DataAccessException, DataAccessUnauthorizedException {
+    public InsertGameResult insertGame(InsertGameRequest request) throws DataAccessException, UnauthorizedException {
         authDAO.confirmAuth(request.authToken());
         int gameID = gameDAO.generateNewGameID();
         String gameName = request.gameName();
@@ -33,7 +33,7 @@ public class GameService {
         return new InsertGameResult(gameID);
     }
 
-    public ListGamesResult listGames(ListGamesRequest request) throws DataAccessException, DataAccessUnauthorizedException {
+    public ListGamesResult listGames(ListGamesRequest request) throws DataAccessException, UnauthorizedException {
         authDAO.confirmAuth(request.authToken());
         return new ListGamesResult(gameDAO.listGames());
     }

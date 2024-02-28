@@ -24,11 +24,11 @@ public class UserService {
         return new RegisterResult(myUserData.username(), myAuthData.authToken());
     }
 
-    public void logout(LogoutRequest request) throws DataAccessException, DataNotFoundException {
+    public void logout(LogoutRequest request) throws DataAccessException, BadRequestException {
         authDAO.deleteAuth(request.authToken());
     }
 
-    public LoginResult login(LoginRequest request) throws DataNotFoundException, DataAccessException {
+    public LoginResult login(LoginRequest request) throws BadRequestException, DataAccessException {
         userDAO.getUser(request.username());
         userDAO.getPassword(request.username(), request.password());
         AuthData myAuthData = new AuthData(authDAO.generateAuthToken(request.username()), request.username());

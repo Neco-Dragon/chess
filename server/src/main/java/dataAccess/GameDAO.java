@@ -23,9 +23,9 @@ public interface GameDAO {
      * @param gameID the ID of the game to get
      * @return the retrieved game data
      * @throws DataAccessException if an error occurs during data access
-     * @throws DataNotFoundException if the game is not in the Database
+     * @throws BadRequestException if the game is not in the Database
      */
-    GameData getGame(int gameID) throws DataAccessException, DataNotFoundException;
+    GameData getGame(int gameID) throws DataAccessException, BadRequestException;
 
     /**Lists all games stored in the database.
      * @return the list of game data
@@ -37,10 +37,10 @@ public interface GameDAO {
      * @param gameID the ID of the game to update
      * @param gameData the new game that the game is being updated to
      * @throws DataAccessException if an error occurs during data access
-     * @throws DataNotFoundException if a game with the given gameID isn't found in the Database
+     * @throws BadRequestException if a game with the given gameID isn't found in the Database
      */
 
-    void updateGame(int gameID, GameData gameData) throws DataAccessException, DataNotFoundException;
+    void updateGame(int gameID, GameData gameData) throws DataAccessException, BadRequestException;
 
     /**Deletes the game with the specified ID.
      * @param gameID the ID of the game to delete
@@ -54,6 +54,6 @@ public interface GameDAO {
      * @param clientUsername username of the client, which will be added into the given color's username parameter
      */
 
-    void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws DataNotFoundException, DataAccessException;
+    void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws BadRequestException, DataAccessException;
     int generateNewGameID();
 }

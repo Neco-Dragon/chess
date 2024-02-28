@@ -16,7 +16,7 @@ public class ClearServiceTests {
     MemoryAuthDAO authDAO = new MemoryAuthDAO();
     ClearService service = new ClearService(authDAO, userDAO, gameDAO);
     @Test
-    void clearTest() throws DataAccessException, DataNotFoundException {
+    void clearTest() throws DataAccessException, BadRequestException {
         GameData testGame = new GameData(1, "Magnus", "Hikaru", "Tata Steel 2024", new ChessGame());
         gameDAO.insertGame(testGame);
         AuthData testAuth = new AuthData("SECURE", "MyUsername");
@@ -24,8 +24,8 @@ public class ClearServiceTests {
         UserData testUser = new UserData("MyUsername", "1234", "My@email.com");
         userDAO.createUser(testUser);
         service.clear();
-        Assertions.assertThrows(DataNotFoundException.class, () -> gameDAO.getGame(testGame.gameID()));
-        Assertions.assertThrows(DataNotFoundException.class, () -> authDAO.getAuth(testAuth));
-        Assertions.assertThrows(DataNotFoundException.class, () -> userDAO.getUser(testUser.username()));
+        Assertions.assertThrows(BadRequestException.class, () -> gameDAO.getGame(testGame.gameID()));
+        Assertions.assertThrows(BadRequestException.class, () -> authDAO.getAuth(testAuth));
+        Assertions.assertThrows(BadRequestException.class, () -> userDAO.getUser(testUser.username()));
     }
 }

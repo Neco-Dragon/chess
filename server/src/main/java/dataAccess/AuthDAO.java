@@ -20,22 +20,22 @@ public interface AuthDAO {
      * @param authData the Auth data to get
      * @return the retrieved Auth data
      * @throws DataAccessException if an error occurs during data access
-     * @throws DataNotFoundException if the Auth token is not found
+     * @throws BadRequestException if the Auth token is not found
      */
-    AuthData getAuth(AuthData authData) throws DataAccessException, DataNotFoundException;
+    AuthData getAuth(AuthData authData) throws DataAccessException, BadRequestException;
 
     /**Deletes Auth data.
      * @param authData the Auth data to delete
      * @throws DataAccessException if an error occurs during data access
      */
-    void deleteAuth(String authToken) throws DataAccessException, DataNotFoundException;
+    void deleteAuth(String authToken) throws DataAccessException, BadRequestException;
 
     /**Confirms Auth data.
      * @param authData the Auth data to confirm
      * @throws DataAccessException if an error occurs during data access
      */
-    void confirmAuth(String authToken) throws DataAccessException, DataAccessUnauthorizedException;
-    String getUsername(String authToken) throws DataAccessException, DataNotFoundException, DataAccessUnauthorizedException;
+    void confirmAuth(String authToken) throws DataAccessException, UnauthorizedException;
+    String getUsername(String authToken) throws DataAccessException, BadRequestException, UnauthorizedException;
     public String generateAuthToken(String username);
 
 }

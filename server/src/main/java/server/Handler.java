@@ -1,9 +1,9 @@
 package server;
 
-import dataAccess.AuthDAO;
-import dataAccess.DataAccessException;
-import dataAccess.GameDAO;
-import dataAccess.UserDAO;
+import RequestClasses.*;
+import ResultClasses.*;
+import com.google.gson.Gson;
+import dataAccess.*;
 import service.ClearService;
 import service.GameService;
 import service.UserService;
@@ -11,30 +11,61 @@ import spark.Request;
 import spark.Response;
 
 public class Handler {
-    UserDAO userDAO;
-    AuthDAO authDAO;
-    GameDAO gameDAO;
-    UserService userService;
-    ClearService clearService;
-    GameService gameService;
+    private final UserService userService;
+    private final ClearService clearService;
+    private final GameService gameService;
+    private final Gson gson = new Gson();
 
     public Handler(UserDAO userDAO, AuthDAO authDAO, GameDAO gameDAO) {
-        this.userDAO = userDAO;
-        this.authDAO = authDAO;
-        this.gameDAO = gameDAO;
-        this.userService = new UserService(this.authDAO, this.userDAO);
-        this.gameService = new GameService(this.authDAO, this.gameDAO);
-        this.clearService = new ClearService(this.authDAO, this.userDAO, this.gameDAO);
-        }
+        this.userService = new UserService(authDAO, userDAO);
+        this.gameService = new GameService(authDAO, gameDAO);
+        this.clearService = new ClearService(authDAO, userDAO, gameDAO);
     }
-    private Object clear(Request request, Response response) {
-        try {
-            this.clearService.clear();
-            return "[200]";
-        }
-        catch (DataAccessException e){
-            return "[500] { \"message\": \"Error: description\" }";
-        }
+    public Object clear(Request request, Response response) throws DataAccessException {
+        this.clearService.clear();
+        response.status(200);
+        return "{}";
     }
 
+    public Object register(Request request, Response response) throws DataAccessException {
+        RegisterRequest registerRequest = gson.fromJson(request.body(), RegisterRequest.class);
+        RegisterResult result = this.userService.register(registerRequest);
+        response.status(200);
+        return gson.toJson(result);
+    }
+
+    public Object login(Request request, Response response) throws BadRequestException, DataAccessException {
+        LoginRequest loginRequest = gson.fromJson(request.body(), LoginRequest.class);
+        LoginResult result = this.userService.login(loginRequest);
+        response.status(200);
+        return gson.toJson(result);
+    }
+
+    public Object logout(Request request, Response response) throws BadRequestException, DataAccessException {
+        String authToken = request.headers("authorization");
+        this.userService.logout(new LogoutRequest(authToken));
+        response.status(200);
+        return "{}"; //This handle request has nothing in its return body.
+    }
+
+    public Object listGames(Request request, Response response) throws UnauthorizedException, DataAccessException {
+        ListGamesRequest listGamesRequest = gson.fromJson(request.body(), ListGamesRequest.class);
+        ListGamesResult result = this.gameService.listGames(listGamesRequest);
+        response.status(200);
+        return gson.toJson(result);
+    }
+
+    public Object createGame(Request request, Response response) throws UnauthorizedException, DataAccessException {
+        InsertGameRequest insertGameRequest = gson.fromJson(request.body(), InsertGameRequest.class);
+        InsertGameResult result = this.gameService.insertGame(insertGameRequest);
+        response.status(200);
+        return gson.toJson(result);
+    }
+
+    public Object joinGame(Request request, Response response) throws UnauthorizedException, BadRequestException, DataAccessException {
+        JoinGameRequest joinGameRequest = gson.fromJson(request.body(), JoinGameRequest.class);
+        this.gameService.joinGame(joinGameRequest);
+        response.status(200);
+        return "{}"; //This handle request has nothing in its return body.
+    }
 }

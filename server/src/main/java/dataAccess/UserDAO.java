@@ -22,14 +22,14 @@ public interface UserDAO {
      * @param username the username of the user to get
      * @return the retrieved user data
      * @throws DataAccessException if an error occurs during data access
-     * @throws DataNotFoundException if the user is not in the Database
+     * @throws BadRequestException if the user is not in the Database
      */
-    UserData getUser(String username) throws DataAccessException, DataNotFoundException;
+    UserData getUser(String username) throws DataAccessException, BadRequestException;
 
     /**Retrieves user data based on the password.
      * @param password the password of the user to get
      * @return the retrieved user data
      * @throws DataAccessException if an error occurs during data access
      */
-    UserData getPassword(String username, String password) throws DataAccessException, DataNotFoundException;
+    UserData getPassword(String username, String password) throws DataAccessException, BadRequestException;
 }

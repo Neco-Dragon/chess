@@ -2,7 +2,7 @@ package server;
 
 import dataAccess.*;
 import spark.*;
-import server;
+
 
 public class Server {
 
@@ -14,13 +14,26 @@ public class Server {
         AuthDAO authDAO = new MemoryAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
 
+        //Exception Handlers
+        Spark.exception(ServerException.class, this::exceptionHandler);
+
         Handler myHandler = new Handler(userDAO, authDAO, gameDAO);
 
         //Endpoints (these point to handlers)
-        Spark.delete("/db", this::clear);
-        Spark.post("/pet", this::addPet); // Endpoint points to the handlers
-
-        // Register your endpoints and handle exceptions here.
+        //CLEAR
+        Spark.delete("/db", myHandler::clear);
+        //REGISTER
+        Spark.post("/user", myHandler::register);
+        //LOGIN
+        Spark.post("/session", myHandler::login);
+        //LOGOUT
+        Spark.delete("/session", myHandler::logout);
+        //LIST GAMES
+        Spark.get("/game", myHandler::listGames);
+        //CREATE GAME
+        Spark.post("/game", myHandler::createGame);
+        //JOIN GAME
+        Spark.put("/game", myHandler::joinGame);
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -31,8 +44,7 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Object clear(Request request, Response response) {
-
+    private void exceptionHandler(ServerException ex, Request request, Response response) {
+        response.status(ex.statusCode());
     }
-
 }

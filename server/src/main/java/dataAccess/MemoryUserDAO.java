@@ -26,19 +26,19 @@ public class MemoryUserDAO implements UserDAO{
     }
 
     @Override
-    public UserData getUser(String username) throws DataAccessException, DataNotFoundException {
+    public UserData getUser(String username) throws DataAccessException, BadRequestException {
         UserData myUserData = fakeUserInfoDatabase.get(username);
         if (myUserData == null){
-            throw new DataNotFoundException("No such username exists");
+            throw new BadRequestException("No such username exists");
         }
         return myUserData;
     }
 
     @Override
-    public UserData getPassword(String username, String password) throws DataAccessException, DataNotFoundException{
+    public UserData getPassword(String username, String password) throws DataAccessException, BadRequestException {
         UserData myUserData = fakeUserInfoDatabase.get(username);
         if (myUserData == null){
-            throw new DataNotFoundException("No such username exists");
+            throw new BadRequestException("No such username exists");
         }
         if (!Objects.equals(myUserData.password(), password)){
             throw new DataAccessException("Username and password do not match");

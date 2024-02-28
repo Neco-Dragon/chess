@@ -25,30 +25,30 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public AuthData getAuth(AuthData authData) throws DataAccessException, DataNotFoundException {
+    public AuthData getAuth(AuthData authData) throws DataAccessException, BadRequestException {
         if (fakeAuthTokenDatabase.get(authData.authToken()) == null){
-            throw new DataNotFoundException("No such Auth token exists");
+            throw new BadRequestException("No such Auth token exists");
         }
         return authData;
     }
 
     @Override
-    public void deleteAuth(String authToken) throws DataAccessException, DataNotFoundException {
+    public void deleteAuth(String authToken) throws DataAccessException, BadRequestException {
         if (fakeAuthTokenDatabase.get(authToken) == null){
-            throw new DataNotFoundException("No such Auth token exists");
+            throw new BadRequestException("No such Auth token exists");
         }
         fakeAuthTokenDatabase.remove(authToken);
     }
 
     @Override
-    public void confirmAuth(String authToken) throws DataAccessException, DataAccessUnauthorizedException {
+    public void confirmAuth(String authToken) throws DataAccessException, UnauthorizedException {
         if (fakeAuthTokenDatabase.get(authToken) == null){
-            throw new DataAccessUnauthorizedException("auth token not found in database");
+            throw new UnauthorizedException("auth token not found in database");
         }
     }
 
     @Override
-    public String getUsername(String authToken) throws DataAccessException, DataNotFoundException, DataAccessUnauthorizedException {
+    public String getUsername(String authToken) throws DataAccessException, BadRequestException, UnauthorizedException {
         confirmAuth(authToken);
         return fakeAuthTokenDatabase.get(authToken).username();
     }

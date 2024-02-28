@@ -6,12 +6,10 @@ import RequestClasses.RegisterRequest;
 import ResultClasses.LoginResult;
 import ResultClasses.RegisterResult;
 import dataAccess.*;
-import model.AuthData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.ClearService;
-import service.GameService;
 import service.UserService;
 
 public class UserServiceTests {
@@ -22,12 +20,12 @@ public class UserServiceTests {
     ClearService clearService = new ClearService(authDAO, userDAO, gameDAO);
     UserService userService = new UserService(authDAO, userDAO);
     @BeforeEach
-    void clear() throws DataNotFoundException, DataAccessException {
+    void clear() throws BadRequestException, DataAccessException {
         clearService.clear();
     }
 
     @Test
-    void registerSuccessTest() throws DataAccessException, DataNotFoundException, DataAccessUnauthorizedException {
+    void registerSuccessTest() throws DataAccessException, BadRequestException, UnauthorizedException {
         RegisterResult result = userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         Assertions.assertEquals(result.username(), "myUser");
         Assertions.assertDoesNotThrow(() -> authDAO.confirmAuth(result.authToken()));
@@ -41,31 +39,31 @@ public class UserServiceTests {
     }
 
     @Test
-    void loginSuccessTest() throws DataNotFoundException, DataAccessException {
+    void loginSuccessTest() throws BadRequestException, DataAccessException {
         userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         Assertions.assertDoesNotThrow(() -> userService.login(new LoginRequest("myUser", "myPass")));
     }
 
     @Test
-    void loginFailureTest() throws DataAccessException, DataNotFoundException {
+    void loginFailureTest() throws DataAccessException, BadRequestException {
         userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         //wrong username
-        Assertions.assertThrows(DataNotFoundException.class, () -> userService.login(new LoginRequest("myWrongUser", "myPass")));
+        Assertions.assertThrows(BadRequestException.class, () -> userService.login(new LoginRequest("myWrongUser", "myPass")));
         //right username, wrong password
         Assertions.assertThrows(DataAccessException.class, () -> userService.login(new LoginRequest("myUser", "myWrongPass")));
     }
     @Test
-    void logoutSuccessTest() throws DataAccessException, DataNotFoundException {
+    void logoutSuccessTest() throws DataAccessException, BadRequestException {
         userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         LoginResult result = userService.login(new LoginRequest("myUser", "myPass"));
         Assertions.assertDoesNotThrow(() -> userService.logout(new LogoutRequest(result.authToken())));
     }
 
     @Test
-    void logoutFailureTest() throws DataAccessException, DataNotFoundException {
+    void logoutFailureTest() throws DataAccessException, BadRequestException {
         userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         userService.login(new LoginRequest("myUser", "myPass"));
-        Assertions.assertThrows(DataNotFoundException.class, () -> userService.logout(new LogoutRequest("FakeAuthToken")));
+        Assertions.assertThrows(BadRequestException.class, () -> userService.logout(new LogoutRequest("FakeAuthToken")));
 
     }
 }

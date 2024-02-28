@@ -26,10 +26,10 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public GameData getGame(int gameID) throws DataAccessException, DataNotFoundException {
+    public GameData getGame(int gameID) throws DataAccessException, BadRequestException {
         GameData myGameData = fakeGameDatabase.get(gameID);
         if (myGameData == null){
-            throw new DataNotFoundException("No such gameID exists");
+            throw new BadRequestException("No such gameID exists");
         }
         return myGameData;
     }
@@ -45,10 +45,10 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void updateGame(int gameID, GameData gameData) throws DataAccessException, DataNotFoundException {
+    public void updateGame(int gameID, GameData gameData) throws DataAccessException, BadRequestException {
         GameData myGameData = fakeGameDatabase.get(gameID);
         if (myGameData == null){
-            throw new DataNotFoundException("No such gameID exists");
+            throw new BadRequestException("No such gameID exists");
         }
         else {
             fakeGameDatabase.put(gameID, gameData);
@@ -63,11 +63,11 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws DataNotFoundException, DataAccessException {
+    public void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws BadRequestException, DataAccessException {
         GameData myGame = fakeGameDatabase.get(gameID);
         GameData myNewGame;
         if (myGame == null){
-            throw new DataNotFoundException("No such gameID exists");
+            throw new BadRequestException("No such gameID exists");
         }
         //since records are immutable, we will overwrite it with new information
         if (clientColor == ChessGame.TeamColor.WHITE){
