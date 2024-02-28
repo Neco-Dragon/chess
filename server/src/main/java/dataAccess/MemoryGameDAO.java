@@ -46,7 +46,7 @@ public class MemoryGameDAO implements GameDAO{
             throw new BadRequestException();
         }
         else {
-            fakeGameDatabase.put(gameID, gameData);
+            fakeGameDatabase.replace(gameID, gameData);
         }
     }
 
