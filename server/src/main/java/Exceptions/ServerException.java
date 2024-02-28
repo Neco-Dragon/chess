@@ -1,4 +1,4 @@
-package dataAccess;
+package Exceptions;
 
 public abstract class ServerException extends Exception{
     public ServerException(String message) {

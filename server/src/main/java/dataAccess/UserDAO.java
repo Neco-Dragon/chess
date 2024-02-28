@@ -1,5 +1,9 @@
 package dataAccess;
 
+import Exceptions.AlreadyTakenException;
+import Exceptions.BadRequestException;
+import Exceptions.DataAccessException;
+import Exceptions.UnauthorizedException;
 import model.UserData;
 
 public interface UserDAO {

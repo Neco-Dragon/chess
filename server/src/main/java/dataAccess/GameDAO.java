@@ -1,5 +1,8 @@
 package dataAccess;
 
+import Exceptions.AlreadyTakenException;
+import Exceptions.BadRequestException;
+import Exceptions.DataAccessException;
 import chess.ChessGame;
 import model.GameData;
 
@@ -32,21 +35,6 @@ public interface GameDAO {
      * @throws DataAccessException if an error occurs during data access
      */
     ArrayList<GameData> listGames() throws DataAccessException;
-
-    /**Updates the game with the specified ID.
-     * @param gameID the ID of the game to update
-     * @param gameData the new game that the game is being updated to
-     * @throws DataAccessException if an error occurs during data access
-     * @throws BadRequestException if a game with the given gameID isn't found in the Database
-     */
-
-    void updateGame(int gameID, GameData gameData) throws DataAccessException, BadRequestException;
-
-    /**Deletes the game with the specified ID.
-     * @param gameID the ID of the game to delete
-     * @throws DataAccessException if an error occurs during data access
-     */
-    void deleteGame(int gameID) throws DataAccessException, BadRequestException;
 
     /**Joins a game with the specified ID and assigns the client a color.
      * @param gameID      the ID of the game to join

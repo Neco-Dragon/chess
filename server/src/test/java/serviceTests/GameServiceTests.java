@@ -1,5 +1,9 @@
 package serviceTests;
 
+import Exceptions.AlreadyTakenException;
+import Exceptions.BadRequestException;
+import Exceptions.DataAccessException;
+import Exceptions.UnauthorizedException;
 import chess.ChessGame;
 import dataAccess.*;
 import model.AuthData;

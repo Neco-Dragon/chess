@@ -1,4 +1,4 @@
-package dataAccess;
+package Exceptions;
 
 public class BadRequestException extends ServerException{
     public BadRequestException() {

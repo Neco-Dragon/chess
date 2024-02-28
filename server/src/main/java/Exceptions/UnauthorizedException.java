@@ -1,4 +1,4 @@
-package dataAccess;
+package Exceptions;
 
 public class UnauthorizedException extends ServerException{
     public UnauthorizedException() {

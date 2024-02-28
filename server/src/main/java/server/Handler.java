@@ -1,5 +1,9 @@
 package server;
 
+import Exceptions.AlreadyTakenException;
+import Exceptions.BadRequestException;
+import Exceptions.DataAccessException;
+import Exceptions.UnauthorizedException;
 import RequestClasses.*;
 import ResultClasses.*;
 import com.google.gson.Gson;

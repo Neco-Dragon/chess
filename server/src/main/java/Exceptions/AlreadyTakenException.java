@@ -1,4 +1,4 @@
-package dataAccess;
+package Exceptions;
 
 public class AlreadyTakenException extends ServerException{
     public AlreadyTakenException() {
