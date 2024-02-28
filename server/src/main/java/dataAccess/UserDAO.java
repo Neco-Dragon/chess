@@ -16,7 +16,7 @@ public interface UserDAO {
      * @return the Auth token (with other data) associated with the created user
      * @throws DataAccessException if an error occurs during data access
      */
-    UserData createUser(UserData userData) throws DataAccessException, BadRequestException;
+    UserData createUser(UserData userData) throws DataAccessException, BadRequestException, AlreadyTakenException;
 
     /**Retrieves user data based on the username.
      * @param username the username of the user to get
