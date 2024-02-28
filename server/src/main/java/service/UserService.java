@@ -28,7 +28,7 @@ public class UserService {
         authDAO.deleteAuth(request.authToken());
     }
 
-    public LoginResult login(LoginRequest request) throws BadRequestException, DataAccessException {
+    public LoginResult login(LoginRequest request) throws BadRequestException, DataAccessException, UnauthorizedException {
         userDAO.getUser(request.username());
         userDAO.getPassword(request.username(), request.password());
         AuthData myAuthData = new AuthData(authDAO.generateAuthToken(request.username()), request.username());

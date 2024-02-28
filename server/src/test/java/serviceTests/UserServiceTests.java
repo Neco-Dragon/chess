@@ -53,14 +53,14 @@ public class UserServiceTests {
         Assertions.assertThrows(DataAccessException.class, () -> userService.login(new LoginRequest("myUser", "myWrongPass")));
     }
     @Test
-    void logoutSuccessTest() throws DataAccessException, BadRequestException {
+    void logoutSuccessTest() throws DataAccessException, BadRequestException, UnauthorizedException {
         userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         LoginResult result = userService.login(new LoginRequest("myUser", "myPass"));
         Assertions.assertDoesNotThrow(() -> userService.logout(new LogoutRequest(result.authToken())));
     }
 
     @Test
-    void logoutFailureTest() throws DataAccessException, BadRequestException {
+    void logoutFailureTest() throws DataAccessException, BadRequestException, UnauthorizedException {
         userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         userService.login(new LoginRequest("myUser", "myPass"));
         Assertions.assertThrows(BadRequestException.class, () -> userService.logout(new LogoutRequest("FakeAuthToken")));

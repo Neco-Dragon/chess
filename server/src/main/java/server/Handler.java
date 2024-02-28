@@ -34,7 +34,7 @@ public class Handler {
         return gson.toJson(result);
     }
 
-    public Object login(Request request, Response response) throws BadRequestException, DataAccessException {
+    public Object login(Request request, Response response) throws BadRequestException, DataAccessException, UnauthorizedException {
         LoginRequest loginRequest = gson.fromJson(request.body(), LoginRequest.class);
         LoginResult result = this.userService.login(loginRequest);
         response.status(200);
