@@ -19,7 +19,7 @@ public class MemoryGameDAO implements GameDAO{
     @Override
     public GameData insertGame(GameData gameData) throws DataAccessException {
         if (fakeGameDatabase.get(gameData.gameID()) != null){
-            throw new DataAccessException("Game ID already exists");
+            throw new DataAccessException();
         }
         fakeGameDatabase.put(gameData.gameID(), gameData);
         return gameData;
@@ -29,7 +29,7 @@ public class MemoryGameDAO implements GameDAO{
     public GameData getGame(int gameID) throws DataAccessException, BadRequestException {
         GameData myGameData = fakeGameDatabase.get(gameID);
         if (myGameData == null){
-            throw new BadRequestException("No such gameID exists");
+            throw new BadRequestException();
         }
         return myGameData;
     }
@@ -48,7 +48,7 @@ public class MemoryGameDAO implements GameDAO{
     public void updateGame(int gameID, GameData gameData) throws DataAccessException, BadRequestException {
         GameData myGameData = fakeGameDatabase.get(gameID);
         if (myGameData == null){
-            throw new BadRequestException("No such gameID exists");
+            throw new BadRequestException();
         }
         else {
             fakeGameDatabase.put(gameID, gameData);
@@ -58,7 +58,7 @@ public class MemoryGameDAO implements GameDAO{
     @Override
     public void deleteGame(int gameID) throws DataAccessException {
         if (fakeGameDatabase.remove(gameID) == null){
-            throw new DataAccessException("No game was deleted");
+            throw new DataAccessException();
         }
     }
 
@@ -67,18 +67,18 @@ public class MemoryGameDAO implements GameDAO{
         GameData myGame = fakeGameDatabase.get(gameID);
         GameData myNewGame;
         if (myGame == null){
-            throw new BadRequestException("No such gameID exists");
+            throw new BadRequestException();
         }
         //since records are immutable, we will overwrite it with new information
         if (clientColor == ChessGame.TeamColor.WHITE){
             if (myGame.whiteUsername() != null){
-                throw new DataAccessException("There can only be one player for the white pieces");
+                throw new DataAccessException();
             }
             myNewGame = new GameData(gameID, clientUsername, myGame.blackUsername(), myGame.gameName(), myGame.game());
         }
         else {
             if (myGame.blackUsername() != null){
-                throw new DataAccessException("There can only be one player for the black pieces");
+                throw new DataAccessException();
             }
             myNewGame = new GameData(gameID, myGame.whiteUsername(), clientUsername, myGame.gameName(), myGame.game());
         }

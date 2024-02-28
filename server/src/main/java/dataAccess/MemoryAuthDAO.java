@@ -18,7 +18,7 @@ public class MemoryAuthDAO implements AuthDAO{
     @Override
     public AuthData insertAuth(AuthData authData) throws DataAccessException {
         if (fakeAuthTokenDatabase.get(authData.authToken()) != null){
-            throw new DataAccessException("Auth Token already exists");
+            throw new DataAccessException();
         }
         fakeAuthTokenDatabase.put(authData.authToken(), authData);
         return authData;
@@ -27,7 +27,7 @@ public class MemoryAuthDAO implements AuthDAO{
     @Override
     public AuthData getAuth(AuthData authData) throws DataAccessException, BadRequestException {
         if (fakeAuthTokenDatabase.get(authData.authToken()) == null){
-            throw new BadRequestException("No such Auth token exists");
+            throw new BadRequestException();
         }
         return authData;
     }
@@ -35,7 +35,7 @@ public class MemoryAuthDAO implements AuthDAO{
     @Override
     public void deleteAuth(String authToken) throws DataAccessException, BadRequestException {
         if (fakeAuthTokenDatabase.get(authToken) == null){
-            throw new BadRequestException("No such Auth token exists");
+            throw new BadRequestException();
         }
         fakeAuthTokenDatabase.remove(authToken);
     }
@@ -43,7 +43,7 @@ public class MemoryAuthDAO implements AuthDAO{
     @Override
     public void confirmAuth(String authToken) throws DataAccessException, UnauthorizedException {
         if (fakeAuthTokenDatabase.get(authToken) == null){
-            throw new UnauthorizedException("auth token not found in database");
+            throw new UnauthorizedException();
         }
     }
 

@@ -19,7 +19,7 @@ public class MemoryUserDAO implements UserDAO{
     @Override
     public UserData createUser(UserData userData) throws DataAccessException {
         if (fakeUserInfoDatabase.get(userData.username()) != null){
-            throw new DataAccessException("Username already taken");
+            throw new DataAccessException();
         }
         fakeUserInfoDatabase.put(userData.username(), userData);
         return userData;
@@ -29,7 +29,7 @@ public class MemoryUserDAO implements UserDAO{
     public UserData getUser(String username) throws DataAccessException, BadRequestException {
         UserData myUserData = fakeUserInfoDatabase.get(username);
         if (myUserData == null){
-            throw new BadRequestException("No such username exists");
+            throw new BadRequestException();
         }
         return myUserData;
     }
@@ -38,10 +38,10 @@ public class MemoryUserDAO implements UserDAO{
     public UserData getPassword(String username, String password) throws DataAccessException, BadRequestException {
         UserData myUserData = fakeUserInfoDatabase.get(username);
         if (myUserData == null){
-            throw new BadRequestException("No such username exists");
+            throw new BadRequestException();
         }
         if (!Objects.equals(myUserData.password(), password)){
-            throw new DataAccessException("Username and password do not match");
+            throw new DataAccessException();
         }
         return myUserData;
     }

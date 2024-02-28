@@ -14,7 +14,7 @@ public class Server {
         AuthDAO authDAO = new MemoryAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
 
-        //Exception Handlers
+        //Exception Handler
         Spark.exception(ServerException.class, this::exceptionHandler);
 
         Handler myHandler = new Handler(userDAO, authDAO, gameDAO);
@@ -46,5 +46,6 @@ public class Server {
 
     private void exceptionHandler(ServerException ex, Request request, Response response) {
         response.status(ex.statusCode());
+        response.body(ex.getMessage());
     }
 }
