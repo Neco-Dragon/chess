@@ -64,6 +64,11 @@ public class MemoryGameDAO implements GameDAO{
         if (myGame == null){
             throw new BadRequestException();
         }
+        if (myGame.whiteUsername() == null && myGame.blackUsername() == null){
+            if (clientColor == null){
+                return;
+            }
+        }
         //since records are immutable, we will overwrite it with new information
         if (clientColor == ChessGame.TeamColor.WHITE){
             if (myGame.whiteUsername() != null){
@@ -71,11 +76,14 @@ public class MemoryGameDAO implements GameDAO{
             }
             myNewGame = new GameData(gameID, clientUsername, myGame.blackUsername(), myGame.gameName(), myGame.game());
         }
-        else {
+        else if (clientColor == ChessGame.TeamColor.BLACK) {
             if (myGame.blackUsername() != null){
                 throw new AlreadyTakenException();
             }
             myNewGame = new GameData(gameID, myGame.whiteUsername(), clientUsername, myGame.gameName(), myGame.game());
+        }
+        else {
+            myNewGame = new GameData(gameID, myGame.whiteUsername(), myGame.blackUsername(), myGame.gameName(), myGame.game());
         }
         fakeGameDatabase.put(gameID, myNewGame);
     }
