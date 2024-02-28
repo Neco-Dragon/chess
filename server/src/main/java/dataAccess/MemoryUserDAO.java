@@ -32,7 +32,7 @@ public class MemoryUserDAO implements UserDAO{
     }
 
     @Override
-    public UserData getUser(String username) throws UnauthorizedException {
+    public UserData getUser(String username) throws UnauthorizedException, BadRequestException {
         UserData myUserData = fakeUserInfoDatabase.get(username);
         if (myUserData == null){
             throw new UnauthorizedException();
@@ -44,7 +44,7 @@ public class MemoryUserDAO implements UserDAO{
     public UserData getPassword(String username, String password) throws DataAccessException, BadRequestException, UnauthorizedException {
         UserData myUserData = fakeUserInfoDatabase.get(username);
         if (myUserData == null){
-            throw new UnauthorizedException();
+            throw new BadRequestException();
         }
         if (!Objects.equals(myUserData.password(), password)){
             throw new UnauthorizedException();

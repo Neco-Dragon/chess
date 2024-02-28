@@ -33,15 +33,15 @@ public class GameServiceTests {
     @Test
     void insertGameSuccessTest() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException {
         authDAO.insertAuth(new AuthData("AuthToken", "MyUsername"));
-        InsertGameResult result = gameService.insertGame(new InsertGameRequest("AuthToken", "myGame"));
+        InsertGameResult result = gameService.insertGame("AuthToken", new InsertGameRequest("myGame"));
         InsertGameResult expected = new InsertGameResult(1);
         Assertions.assertEquals(result, expected);
     }
     @Test
     void insertGameFailureTest() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException {
         authDAO.insertAuth(new AuthData("AuthToken", "MyUsername"));
-        InsertGameRequest request = new InsertGameRequest("InvalidAuthToken", "myGame");
-        Assertions.assertThrows(UnauthorizedException.class, () -> gameService.insertGame(request));
+        InsertGameRequest request = new InsertGameRequest("myGame");
+        Assertions.assertThrows(UnauthorizedException.class, () -> gameService.insertGame("InvalidAuthToken", request));
     }
 
     @Test
@@ -51,7 +51,7 @@ public class GameServiceTests {
         GameData testGame = new GameData(1, null, null, "myGame", chessGame);
         gameDAO.insertGame(testGame);
         GameData expectedGame = new GameData(1, "MyUsername", null, "myGame", chessGame);
-        gameService.joinGame(new JoinGameRequest("AuthToken", ChessGame.TeamColor.WHITE, 1));
+        gameService.joinGame("AuthToken", new JoinGameRequest(ChessGame.TeamColor.WHITE, 1));
         Assertions.assertEquals(gameDAO.getGame(1), expectedGame);
     }
     @Test
@@ -61,12 +61,12 @@ public class GameServiceTests {
         GameData testGame = new GameData(1, "occupied1", "occupied2", "myGame", chessGame);
         gameDAO.insertGame(testGame);
         //usernames already taken
-        Assertions.assertThrows(DataAccessException.class, () -> gameService.joinGame(new JoinGameRequest("AuthToken", ChessGame.TeamColor.WHITE, 1)));
-        Assertions.assertThrows(DataAccessException.class, () -> gameService.joinGame(new JoinGameRequest("AuthToken", ChessGame.TeamColor.BLACK, 1)));
+        Assertions.assertThrows(AlreadyTakenException.class, () -> gameService.joinGame("AuthToken", new JoinGameRequest(ChessGame.TeamColor.WHITE, 1)));
+        Assertions.assertThrows(AlreadyTakenException.class, () -> gameService.joinGame("AuthToken", new JoinGameRequest(ChessGame.TeamColor.BLACK, 1)));
         //invalid game id
-        Assertions.assertThrows(BadRequestException.class, () -> gameService.joinGame(new JoinGameRequest("AuthToken", ChessGame.TeamColor.WHITE, 2)));
+        Assertions.assertThrows(BadRequestException.class, () -> gameService.joinGame("AuthToken", new JoinGameRequest(ChessGame.TeamColor.WHITE, 2)));
         //authTokenInvalid
-        Assertions.assertThrows(UnauthorizedException.class, () -> gameService.joinGame(new JoinGameRequest("InvalidAuthToken", ChessGame.TeamColor.WHITE, 1)));
+        Assertions.assertThrows(UnauthorizedException.class, () -> gameService.joinGame("InvalidAuthToken", new JoinGameRequest(ChessGame.TeamColor.WHITE, 1)));
     }
     @Test
     void listGameSuccessTest() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException {

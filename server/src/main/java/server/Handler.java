@@ -56,15 +56,17 @@ public class Handler {
     }
 
     public Object createGame(Request request, Response response) throws UnauthorizedException, DataAccessException, AlreadyTakenException {
+        String authToken = request.headers("authorization");
         InsertGameRequest insertGameRequest = gson.fromJson(request.body(), InsertGameRequest.class);
-        InsertGameResult result = this.gameService.insertGame(insertGameRequest);
+        InsertGameResult result = this.gameService.insertGame(authToken, insertGameRequest);
         response.status(200);
         return gson.toJson(result);
     }
 
     public Object joinGame(Request request, Response response) throws UnauthorizedException, BadRequestException, DataAccessException, AlreadyTakenException {
+        String authToken = request.headers("authorization");
         JoinGameRequest joinGameRequest = gson.fromJson(request.body(), JoinGameRequest.class);
-        this.gameService.joinGame(joinGameRequest);
+        this.gameService.joinGame(authToken, joinGameRequest);
         response.status(200);
         return "{}"; //This handle request has nothing in its return body.
     }

@@ -35,7 +35,7 @@ public class UserServiceTests {
         RegisterRequest request = new RegisterRequest("myUser", "myPass", "me@email.com");
         userService.register(request);
         //user already taken
-        Assertions.assertThrows(DataAccessException.class, () -> userService.register(request));
+        Assertions.assertThrows(AlreadyTakenException.class, () -> userService.register(request));
     }
 
     @Test

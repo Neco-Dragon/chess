@@ -18,13 +18,14 @@ public class GameService {
         this.gameDAO = gameDAO;
     }
 
-    public void joinGame(JoinGameRequest request) throws BadRequestException, DataAccessException, UnauthorizedException, AlreadyTakenException {
+    public void joinGame(String authToken, JoinGameRequest request) throws BadRequestException, DataAccessException, UnauthorizedException, AlreadyTakenException {
+        authDAO.confirmAuth(authToken);
         gameDAO.getGame(request.gameID());
-        gameDAO.joinGame(request.gameID(), request.playerColor(), authDAO.getUsername(request.authToken()));
+        gameDAO.joinGame(request.gameID(), request.playerColor(), authDAO.getUsername(authToken));
     }
 
-    public InsertGameResult insertGame(InsertGameRequest request) throws DataAccessException, UnauthorizedException, AlreadyTakenException {
-        authDAO.confirmAuth(request.authToken());
+    public InsertGameResult insertGame(String authToken, InsertGameRequest request) throws DataAccessException, UnauthorizedException, AlreadyTakenException {
+        authDAO.confirmAuth(authToken);
         int gameID = gameDAO.generateNewGameID();
         String gameName = request.gameName();
         ChessGame chessGame = new ChessGame();
