@@ -48,9 +48,9 @@ public class UserServiceTests {
     void loginFailureTest() throws DataAccessException, BadRequestException, AlreadyTakenException {
         userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         //wrong username
-        Assertions.assertThrows(BadRequestException.class, () -> userService.login(new LoginRequest("myWrongUser", "myPass")));
+        Assertions.assertThrows(UnauthorizedException.class, () -> userService.login(new LoginRequest("myWrongUser", "myPass")));
         //right username, wrong password
-        Assertions.assertThrows(DataAccessException.class, () -> userService.login(new LoginRequest("myUser", "myWrongPass")));
+        Assertions.assertThrows(UnauthorizedException.class, () -> userService.login(new LoginRequest("myUser", "myWrongPass")));
     }
     @Test
     void logoutSuccessTest() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException {
@@ -63,7 +63,7 @@ public class UserServiceTests {
     void logoutFailureTest() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException {
         userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         userService.login(new LoginRequest("myUser", "myPass"));
-        Assertions.assertThrows(BadRequestException.class, () -> userService.logout(new LogoutRequest("FakeAuthToken")));
+        Assertions.assertThrows(UnauthorizedException.class, () -> userService.logout(new LogoutRequest("FakeAuthToken")));
 
     }
 }

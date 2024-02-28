@@ -36,13 +36,7 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public ArrayList<GameData> listGames() throws DataAccessException {
-        //TODO: throw an exception for an exmpty list?
-        ArrayList<GameData> myGameList = new ArrayList<>();
-        for (HashMap.Entry<Integer, GameData> entry : fakeGameDatabase.entrySet()) {
-            GameData game = entry.getValue();
-            myGameList.add(game);
-        }
-        return myGameList;
+        return(new ArrayList<>(fakeGameDatabase.values()));
     }
 
     @Override

@@ -29,6 +29,7 @@ public class UserService {
     }
 
     public LoginResult login(LoginRequest request) throws BadRequestException, DataAccessException, UnauthorizedException, AlreadyTakenException {
+
         userDAO.getUser(request.username());
         userDAO.getPassword(request.username(), request.password());
         AuthData myAuthData = new AuthData(authDAO.generateAuthToken(request.username()), request.username());
