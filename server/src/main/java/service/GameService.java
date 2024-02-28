@@ -18,12 +18,12 @@ public class GameService {
         this.gameDAO = gameDAO;
     }
 
-    public void joinGame(JoinGameRequest request) throws BadRequestException, DataAccessException, UnauthorizedException {
-
+    public void joinGame(JoinGameRequest request) throws BadRequestException, DataAccessException, UnauthorizedException, AlreadyTakenException {
+        gameDAO.getGame(request.gameID());
         gameDAO.joinGame(request.gameID(), request.playerColor(), authDAO.getUsername(request.authToken()));
     }
 
-    public InsertGameResult insertGame(InsertGameRequest request) throws DataAccessException, UnauthorizedException {
+    public InsertGameResult insertGame(InsertGameRequest request) throws DataAccessException, UnauthorizedException, AlreadyTakenException {
         authDAO.confirmAuth(request.authToken());
         int gameID = gameDAO.generateNewGameID();
         String gameName = request.gameName();

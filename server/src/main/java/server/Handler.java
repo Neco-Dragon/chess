@@ -27,21 +27,21 @@ public class Handler {
         return "{}";
     }
 
-    public Object register(Request request, Response response) throws DataAccessException {
+    public Object register(Request request, Response response) throws DataAccessException, BadRequestException, AlreadyTakenException {
         RegisterRequest registerRequest = gson.fromJson(request.body(), RegisterRequest.class);
         RegisterResult result = this.userService.register(registerRequest);
         response.status(200);
         return gson.toJson(result);
     }
 
-    public Object login(Request request, Response response) throws BadRequestException, DataAccessException, UnauthorizedException {
+    public Object login(Request request, Response response) throws BadRequestException, DataAccessException, UnauthorizedException, AlreadyTakenException {
         LoginRequest loginRequest = gson.fromJson(request.body(), LoginRequest.class);
         LoginResult result = this.userService.login(loginRequest);
         response.status(200);
         return gson.toJson(result);
     }
 
-    public Object logout(Request request, Response response) throws BadRequestException, DataAccessException {
+    public Object logout(Request request, Response response) throws BadRequestException, DataAccessException, UnauthorizedException {
         String authToken = request.headers("authorization");
         this.userService.logout(new LogoutRequest(authToken));
         response.status(200);
@@ -55,14 +55,14 @@ public class Handler {
         return gson.toJson(result);
     }
 
-    public Object createGame(Request request, Response response) throws UnauthorizedException, DataAccessException {
+    public Object createGame(Request request, Response response) throws UnauthorizedException, DataAccessException, AlreadyTakenException {
         InsertGameRequest insertGameRequest = gson.fromJson(request.body(), InsertGameRequest.class);
         InsertGameResult result = this.gameService.insertGame(insertGameRequest);
         response.status(200);
         return gson.toJson(result);
     }
 
-    public Object joinGame(Request request, Response response) throws UnauthorizedException, BadRequestException, DataAccessException {
+    public Object joinGame(Request request, Response response) throws UnauthorizedException, BadRequestException, DataAccessException, AlreadyTakenException {
         JoinGameRequest joinGameRequest = gson.fromJson(request.body(), JoinGameRequest.class);
         this.gameService.joinGame(joinGameRequest);
         response.status(200);

@@ -25,13 +25,13 @@ public class UserServiceTests {
     }
 
     @Test
-    void registerSuccessTest() throws DataAccessException, BadRequestException, UnauthorizedException {
+    void registerSuccessTest() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException {
         RegisterResult result = userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         Assertions.assertEquals(result.username(), "myUser");
         Assertions.assertDoesNotThrow(() -> authDAO.confirmAuth(result.authToken()));
     }
     @Test
-    void registerFailureTest() throws DataAccessException {
+    void registerFailureTest() throws DataAccessException, BadRequestException, AlreadyTakenException {
         RegisterRequest request = new RegisterRequest("myUser", "myPass", "me@email.com");
         userService.register(request);
         //user already taken
@@ -39,13 +39,13 @@ public class UserServiceTests {
     }
 
     @Test
-    void loginSuccessTest() throws BadRequestException, DataAccessException {
+    void loginSuccessTest() throws BadRequestException, DataAccessException, AlreadyTakenException {
         userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         Assertions.assertDoesNotThrow(() -> userService.login(new LoginRequest("myUser", "myPass")));
     }
 
     @Test
-    void loginFailureTest() throws DataAccessException, BadRequestException {
+    void loginFailureTest() throws DataAccessException, BadRequestException, AlreadyTakenException {
         userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         //wrong username
         Assertions.assertThrows(BadRequestException.class, () -> userService.login(new LoginRequest("myWrongUser", "myPass")));
@@ -53,14 +53,14 @@ public class UserServiceTests {
         Assertions.assertThrows(DataAccessException.class, () -> userService.login(new LoginRequest("myUser", "myWrongPass")));
     }
     @Test
-    void logoutSuccessTest() throws DataAccessException, BadRequestException, UnauthorizedException {
+    void logoutSuccessTest() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException {
         userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         LoginResult result = userService.login(new LoginRequest("myUser", "myPass"));
         Assertions.assertDoesNotThrow(() -> userService.logout(new LogoutRequest(result.authToken())));
     }
 
     @Test
-    void logoutFailureTest() throws DataAccessException, BadRequestException, UnauthorizedException {
+    void logoutFailureTest() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException {
         userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         userService.login(new LoginRequest("myUser", "myPass"));
         Assertions.assertThrows(BadRequestException.class, () -> userService.logout(new LogoutRequest("FakeAuthToken")));

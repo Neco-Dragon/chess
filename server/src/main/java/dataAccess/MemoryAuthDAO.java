@@ -33,9 +33,9 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public void deleteAuth(String authToken) throws DataAccessException, BadRequestException {
+    public void deleteAuth(String authToken) throws DataAccessException, BadRequestException, UnauthorizedException {
         if (fakeAuthTokenDatabase.get(authToken) == null){
-            throw new BadRequestException();
+            throw new UnauthorizedException();
         }
         fakeAuthTokenDatabase.remove(authToken);
     }

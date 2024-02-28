@@ -16,7 +16,7 @@ public class UserService {
         this.authDAO = authDAO;
         this.userDAO = userDAO;
     }
-    public RegisterResult register(RegisterRequest request) throws DataAccessException {
+    public RegisterResult register(RegisterRequest request) throws DataAccessException, BadRequestException, AlreadyTakenException {
         UserData myUserData = new UserData(request.username(), request.password(), request.email());
         AuthData myAuthData = new AuthData(authDAO.generateAuthToken(myUserData.username()), myUserData.username());
         userDAO.createUser(myUserData);
@@ -24,11 +24,11 @@ public class UserService {
         return new RegisterResult(myUserData.username(), myAuthData.authToken());
     }
 
-    public void logout(LogoutRequest request) throws DataAccessException, BadRequestException {
+    public void logout(LogoutRequest request) throws DataAccessException, BadRequestException, UnauthorizedException {
         authDAO.deleteAuth(request.authToken());
     }
 
-    public LoginResult login(LoginRequest request) throws BadRequestException, DataAccessException, UnauthorizedException {
+    public LoginResult login(LoginRequest request) throws BadRequestException, DataAccessException, UnauthorizedException, AlreadyTakenException {
         userDAO.getUser(request.username());
         userDAO.getPassword(request.username(), request.password());
         AuthData myAuthData = new AuthData(authDAO.generateAuthToken(request.username()), request.username());

@@ -28,7 +28,7 @@ public interface AuthDAO {
      * @param authData the Auth data to delete
      * @throws DataAccessException if an error occurs during data access
      */
-    void deleteAuth(String authToken) throws DataAccessException, BadRequestException;
+    void deleteAuth(String authToken) throws DataAccessException, BadRequestException, UnauthorizedException;
 
     /**Confirms Auth data.
      * @param authData the Auth data to confirm
