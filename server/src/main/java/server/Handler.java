@@ -49,8 +49,8 @@ public class Handler {
     }
 
     public Object listGames(Request request, Response response) throws UnauthorizedException, DataAccessException {
-        ListGamesRequest listGamesRequest = gson.fromJson(request.body(), ListGamesRequest.class);
-        ListGamesResult result = this.gameService.listGames(listGamesRequest);
+        String authToken = request.headers("authorization");
+        ListGamesResult result = this.gameService.listGames(new ListGamesRequest(authToken));
         response.status(200);
         return gson.toJson(result);
     }
