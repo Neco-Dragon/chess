@@ -17,9 +17,9 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public GameData insertGame(GameData gameData) throws DataAccessException {
+    public GameData insertGame(GameData gameData) throws DataAccessException, AlreadyTakenException {
         if (fakeGameDatabase.get(gameData.gameID()) != null){
-            throw new DataAccessException();
+            throw new AlreadyTakenException();
         }
         fakeGameDatabase.put(gameData.gameID(), gameData);
         return gameData;
@@ -36,6 +36,7 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public ArrayList<GameData> listGames() throws DataAccessException {
+        //TODO: throw an exception for an exmpty list?
         ArrayList<GameData> myGameList = new ArrayList<>();
         for (HashMap.Entry<Integer, GameData> entry : fakeGameDatabase.entrySet()) {
             GameData game = entry.getValue();
@@ -56,14 +57,14 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void deleteGame(int gameID) throws DataAccessException {
+    public void deleteGame(int gameID) throws DataAccessException, BadRequestException {
         if (fakeGameDatabase.remove(gameID) == null){
-            throw new DataAccessException();
+            throw new BadRequestException();
         }
     }
 
     @Override
-    public void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws BadRequestException, DataAccessException {
+    public void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws BadRequestException, DataAccessException, AlreadyTakenException {
         GameData myGame = fakeGameDatabase.get(gameID);
         GameData myNewGame;
         if (myGame == null){
@@ -72,13 +73,13 @@ public class MemoryGameDAO implements GameDAO{
         //since records are immutable, we will overwrite it with new information
         if (clientColor == ChessGame.TeamColor.WHITE){
             if (myGame.whiteUsername() != null){
-                throw new DataAccessException();
+                throw new AlreadyTakenException();
             }
             myNewGame = new GameData(gameID, clientUsername, myGame.blackUsername(), myGame.gameName(), myGame.game());
         }
         else {
             if (myGame.blackUsername() != null){
-                throw new DataAccessException();
+                throw new AlreadyTakenException();
             }
             myNewGame = new GameData(gameID, myGame.whiteUsername(), clientUsername, myGame.gameName(), myGame.game());
         }

@@ -17,7 +17,7 @@ public interface GameDAO {
      * @return the inserted game data
      * @throws DataAccessException if an error occurs during data access
      */
-    GameData insertGame(GameData gameData) throws DataAccessException;
+    GameData insertGame(GameData gameData) throws DataAccessException, AlreadyTakenException;
 
     /**Retrieves a game by its ID.
      * @param gameID the ID of the game to get
@@ -46,7 +46,7 @@ public interface GameDAO {
      * @param gameID the ID of the game to delete
      * @throws DataAccessException if an error occurs during data access
      */
-    void deleteGame(int gameID) throws DataAccessException;
+    void deleteGame(int gameID) throws DataAccessException, BadRequestException;
 
     /**Joins a game with the specified ID and assigns the client a color.
      * @param gameID      the ID of the game to join
@@ -54,6 +54,6 @@ public interface GameDAO {
      * @param clientUsername username of the client, which will be added into the given color's username parameter
      */
 
-    void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws BadRequestException, DataAccessException;
+    void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws BadRequestException, DataAccessException, AlreadyTakenException;
     int generateNewGameID();
 }

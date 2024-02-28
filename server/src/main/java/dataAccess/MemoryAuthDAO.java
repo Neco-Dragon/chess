@@ -16,9 +16,9 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public AuthData insertAuth(AuthData authData) throws DataAccessException {
+    public AuthData insertAuth(AuthData authData) throws DataAccessException, AlreadyTakenException {
         if (fakeAuthTokenDatabase.get(authData.authToken()) != null){
-            throw new DataAccessException();
+            throw new AlreadyTakenException();
         }
         fakeAuthTokenDatabase.put(authData.authToken(), authData);
         return authData;
@@ -57,6 +57,6 @@ public class MemoryAuthDAO implements AuthDAO{
     public String generateAuthToken(String username){
         //"Now that's what I call hashing"
         Random random = new Random();
-        return Integer.toHexString(random.nextInt());
+        return Long.toHexString(random.nextLong() + System.currentTimeMillis());
     }
 }

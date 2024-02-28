@@ -14,7 +14,7 @@ public interface AuthDAO {
      * @return the created Auth data
      * @throws DataAccessException if an error occurs during data access
      */
-    AuthData insertAuth(AuthData authData) throws DataAccessException;
+    AuthData insertAuth(AuthData authData) throws DataAccessException, AlreadyTakenException;
 
     /**Gets Auth data based on provided Auth information.
      * @param authData the Auth data to get
