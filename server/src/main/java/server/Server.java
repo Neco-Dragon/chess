@@ -13,7 +13,7 @@ public class Server {
 
         //TODO: Switch from SQL to MEmory for testing
         UserDAO userDAO = new MySQLUserDAO();
-        AuthDAO authDAO = new MemoryAuthDAO();
+        AuthDAO authDAO = new MySQLAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
 
         //Exception Handler
