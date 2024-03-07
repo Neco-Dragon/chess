@@ -31,16 +31,6 @@ public class MySQLGameDAO implements GameDAO {
     }
 
     @Override
-    public void updateGame(int gameID, GameData gameData) throws DataAccessException, BadRequestException {
-
-    }
-
-    @Override
-    public void deleteGame(int gameID) throws DataAccessException, BadRequestException {
-
-    }
-
-    @Override
     public void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws BadRequestException, DataAccessException, AlreadyTakenException {
 
     }

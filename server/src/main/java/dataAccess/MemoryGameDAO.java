@@ -34,24 +34,6 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void updateGame(int gameID, GameData gameData) throws BadRequestException {
-        GameData myGameData = fakeGameDatabase.get(gameID);
-        if (myGameData == null){
-            throw new BadRequestException();
-        }
-        else {
-            fakeGameDatabase.replace(gameID, gameData);
-        }
-    }
-
-    @Override
-    public void deleteGame(int gameID) throws BadRequestException {
-        if (fakeGameDatabase.remove(gameID) == null){
-            throw new BadRequestException();
-        }
-    }
-
-    @Override
     public void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws BadRequestException, AlreadyTakenException {
         GameData myGame = fakeGameDatabase.get(gameID);
         GameData myNewGame;
