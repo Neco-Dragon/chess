@@ -3,13 +3,14 @@ package dataAccess;
 import Exceptions.BadRequestException;
 import Exceptions.DataAccessException;
 import Exceptions.UnauthorizedException;
-import model.AuthData;
 import model.UserData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class MySQLUserDAO implements UserDAO{
 
@@ -43,7 +44,7 @@ public class MySQLUserDAO implements UserDAO{
                 ps.setString(3, e); //plug in email
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        return readUser(rs);
+                        return readUserData(rs);
                     }
                 }
             }
@@ -61,7 +62,7 @@ public class MySQLUserDAO implements UserDAO{
                 ps.setString(1, username); //TODO: What is this for? Protects against SQL injection attacks
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
-                        return readUser(rs);
+                        return readUserData(rs);
                     }
                 }
             }
@@ -95,19 +96,10 @@ public class MySQLUserDAO implements UserDAO{
         }
     }
 
-    private UserData readUser(ResultSet rs) throws SQLException {
+    private UserData readUserData(ResultSet rs) throws SQLException {
         var username = rs.getString("username");
         var password = rs.getString("password");
         var email = rs.getString("email");
         return new UserData(username, password, email);
     }
-
-    private UserData readPass(ResultSet rs) throws SQLException {
-        var username = rs.getString("username");
-        var password = rs.getString("password");
-        var email = rs.getString("email");
-        return new UserData(username, password, email);
-    }
-
-
 }

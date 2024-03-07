@@ -1,7 +1,7 @@
 package dataAccess;
 
 import Exceptions.DataAccessException;
-
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import java.sql.*;
 import java.util.Properties;
 
@@ -69,6 +69,4 @@ public class DatabaseManager {
             throw new DataAccessException(e.getMessage());
         }
     }
-
-
 }
