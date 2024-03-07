@@ -71,7 +71,7 @@ public class MySQLUserDAO implements UserDAO{
         try (Connection conn = DatabaseManager.getConnection()) {
             String statement = "SELECT username, password, email FROM users WHERE username=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                ps.setString(1, username); //TODO: What is this for? Protects against SQL injection attacks
+                ps.setString(1, username);
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
                         return readUserData(rs);

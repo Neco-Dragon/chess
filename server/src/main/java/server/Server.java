@@ -10,7 +10,7 @@ public class Server {
     public int run(int desiredPort) throws DataAccessException {
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
-        //TODO: replace MEmory DAO with SQL DB for testing;
+
         UserDAO userDAO = new MySQLUserDAO();
         AuthDAO authDAO = new MySQLAuthDAO();
         GameDAO gameDAO = new MySQLGameDAO();

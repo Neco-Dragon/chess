@@ -18,6 +18,7 @@ public class MemoryAuthDAO implements AuthDAO{
 
     @Override
     public AuthData insertAuth(AuthData authData) throws AlreadyTakenException {
+        //TODO: Delete once refactor is done
         if (fakeAuthTokenDatabase.get(authData.authToken()) != null){
             throw new AlreadyTakenException();
         }
