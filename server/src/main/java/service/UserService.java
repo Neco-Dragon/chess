@@ -24,10 +24,7 @@ public class UserService {
     public RegisterResult register(RegisterRequest request) throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
         UserData myUserData = new UserData(request.username(), request.password(), request.email());
         AuthData myAuthData = new AuthData(authDAO.generateAuthToken(myUserData.username()), myUserData.username());
-        if (myUserData.username() == null){
-            throw new BadRequestException();
-        }
-        if (myUserData.password() == null){
+        if (myUserData.username() == null || myUserData.password() == null || myUserData.email() == null){
             throw new BadRequestException();
         }
         UserData retrievedUserData = userDAO.getUserData(myUserData.username());
