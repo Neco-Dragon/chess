@@ -21,14 +21,27 @@ public class GameService {
     }
 
     public void joinGame(String authToken, JoinGameRequest request) throws BadRequestException, DataAccessException, UnauthorizedException, AlreadyTakenException {
-        if (authDAO.getAuth(authToken) == null){
+        if (authDAO.getAuth(authToken) == null || authDAO.getUsername(authToken) == null){
             throw new UnauthorizedException();
         }
-        if (gameDAO.getGame(request.gameID()) == null){
+        GameData gameData = gameDAO.getGame(request.gameID());
+        if (gameData == null){
             throw new BadRequestException();
         }
-        if (authDAO.getUsername(authToken) == null){
-            throw new UnauthorizedException();
+        if (gameData.whiteUsername() == null && gameData.blackUsername() == null){
+            if (request.playerColor() == null){
+                return;
+            }
+        }
+        if (request.playerColor() == ChessGame.TeamColor.WHITE){
+            if (gameData.whiteUsername() != null){
+                throw new AlreadyTakenException();
+            }
+        }
+        else if (request.playerColor() == ChessGame.TeamColor.BLACK) {
+            if (gameData.blackUsername() != null){
+                throw new AlreadyTakenException();
+            }
         }
         gameDAO.joinGame(request.gameID(), request.playerColor(), authDAO.getUsername(authToken));
     }

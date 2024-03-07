@@ -37,29 +37,15 @@ public class MemoryGameDAO implements GameDAO{
     public void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws BadRequestException, AlreadyTakenException {
         GameData myGame = fakeGameDatabase.get(gameID);
         GameData myNewGame;
-        if (myGame == null){
-            throw new BadRequestException();
-        }
-        if (myGame.whiteUsername() == null && myGame.blackUsername() == null){
-            if (clientColor == null){
-                return;
-            }
-        }
         //since records are immutable, we will overwrite it with new information
         if (clientColor == ChessGame.TeamColor.WHITE){
-            if (myGame.whiteUsername() != null){
-                throw new AlreadyTakenException();
-            }
             myNewGame = new GameData(gameID, clientUsername, myGame.blackUsername(), myGame.gameName(), myGame.game());
         }
         else if (clientColor == ChessGame.TeamColor.BLACK) {
-            if (myGame.blackUsername() != null){
-                throw new AlreadyTakenException();
-            }
             myNewGame = new GameData(gameID, myGame.whiteUsername(), clientUsername, myGame.gameName(), myGame.game());
         }
         else {
-            myNewGame = new GameData(gameID, myGame.whiteUsername(), myGame.blackUsername(), myGame.gameName(), myGame.game());
+            return; //do nothing; they are a spectator;
         }
         fakeGameDatabase.put(gameID, myNewGame);
     }
