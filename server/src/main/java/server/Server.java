@@ -14,7 +14,7 @@ public class Server {
         //TODO: Switch from SQL to MEmory for testing
         UserDAO userDAO = new MySQLUserDAO();
         AuthDAO authDAO = new MySQLAuthDAO();
-        GameDAO gameDAO = new MemoryGameDAO();
+        GameDAO gameDAO = new MySQLGameDAO();
 
         //Exception Handler
         Spark.exception(ServerException.class, this::exceptionHandler);

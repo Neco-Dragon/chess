@@ -5,13 +5,42 @@ import Exceptions.BadRequestException;
 import Exceptions.DataAccessException;
 
 import chess.ChessGame;
+import model.AuthData;
 import model.GameData;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class MySQLGameDAO implements GameDAO {
+
+    private final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS games (
+              `gameID` int NOT NULL,
+              `whiteUsername` varchar(256),
+              `blackUsername` varchar(256),
+              `gameName` varchar(256), NOT NULL
+              `game` Blob, NOT NULL
+              PRIMARY KEY (gameID)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+    };
+    public MySQLGameDAO() throws DataAccessException {
+        DatabaseManager.configureDatabase(createStatements);
+    }
     @Override
     public void clear() throws DataAccessException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String statement = "TRUNCATE TABLE games;"; // "DROP TABLE games"
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.executeUpdate();
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
+        }
 
     }
 
@@ -38,5 +67,15 @@ public class MySQLGameDAO implements GameDAO {
     @Override
     public int generateNewGameID() {
         return 0;
+    }
+
+
+    private GameData readGameData(ResultSet rs) throws SQLException {
+        var gameID = rs.getInt("gameID");
+        var whiteUsername = rs.getString("whiteUsername");
+        var blackUsername = rs.getString("blackUsername");
+        var gameName = rs.getString("gameName");
+        var game = rs.getBlob("game"); //TODO: GSON Magic;
+        return new GameData(gameID, whiteUsername, blackUsername, gameName, new ChessGame()); //TODO: needs to be not a new chess game
     }
 }
