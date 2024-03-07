@@ -27,23 +27,16 @@ public class MemoryUserDAO implements UserDAO{
     }
 
     @Override
-    public UserData getUser(String username) throws UnauthorizedException, BadRequestException {
+    public UserData getUserData(String username) throws UnauthorizedException, BadRequestException, DataAccessException {
         UserData myUserData = fakeUserInfoDatabase.get(username);
         if (myUserData == null){
-            throw new UnauthorizedException();
+            throw new DataAccessException();
         }
         return myUserData;
     }
 
     @Override
-    public UserData getPassword(String username, String password) throws DataAccessException, BadRequestException, UnauthorizedException {
-        UserData myUserData = fakeUserInfoDatabase.get(username);
-        if (myUserData == null){
-            throw new BadRequestException();
-        }
-        if (!Objects.equals(myUserData.password(), password)){
-            throw new UnauthorizedException();
-        }
-        return myUserData;
+    public String getPassword(String username) throws DataAccessException, BadRequestException, UnauthorizedException {
+        return getUserData(username).password();
     }
 }

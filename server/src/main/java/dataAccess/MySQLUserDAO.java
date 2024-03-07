@@ -24,31 +24,17 @@ public class MySQLUserDAO implements UserDAO{
 
     @Override
     public UserData createUser(UserData userData) throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
-        if (userData.username() == null){
-            throw new BadRequestException();
-        }
-        if (userData.password() == null){
-            throw new BadRequestException();
-        }
-        try {
-            if ((this.getUser(userData.username())).username() != null) {
-                throw new AlreadyTakenException();
-            }
-        } catch (Exception e){
-            throw new AlreadyTakenException(e.getMessage());
-        }
-
         String u = userData.username();
         String p = userData.password();
         String e = userData.email();
         String createString = String.format("INSERT INTO users (username, password, email) VALUES ('%s', '%s', '%s');", u, p, e);
-        createString.set
+//        createString.set
         //TODO
         return userData;
     }
 
     @Override
-    public UserData getUser(String username) throws DataAccessException, BadRequestException, UnauthorizedException {
+    public UserData getUserData(String username) throws DataAccessException, BadRequestException, UnauthorizedException {
         try (Connection conn = DatabaseManager.getConnection()) {
             String statement = "SELECT username, password, email FROM users WHERE username=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
@@ -66,7 +52,7 @@ public class MySQLUserDAO implements UserDAO{
     }
 
     @Override
-    public UserData getPassword(String username, String password) throws DataAccessException, BadRequestException, UnauthorizedException {
+    public String getPassword(String username) throws DataAccessException, BadRequestException, UnauthorizedException {
         return null;
     }
 

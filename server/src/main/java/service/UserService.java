@@ -12,6 +12,8 @@ import dataAccess.*;
 import model.AuthData;
 import model.UserData;
 
+import java.util.Objects;
+
 public class UserService {
     AuthDAO authDAO;
     UserDAO userDAO;
@@ -29,7 +31,7 @@ public class UserService {
         if (myUserData.password() == null){
             throw new BadRequestException();
         }
-        if (userDAO.getUser(myUserData.username()) != null){
+        if (userDAO.getUserData(myUserData.username()) != null){
             throw new AlreadyTakenException();
         }
         userDAO.createUser(myUserData);
@@ -42,8 +44,15 @@ public class UserService {
     }
 
     public LoginResult login(LoginRequest request) throws BadRequestException, DataAccessException, UnauthorizedException, AlreadyTakenException {
-        userDAO.getUser(request.username());
-        userDAO.getPassword(request.username(), request.password());
+        if (request.username() == null || request.password() == null){
+            throw new BadRequestException();
+        }
+        UserData userData = userDAO.getUserData(request.username());
+        if (!Objects.equals(request.password(), userData.password())){
+            throw new UnauthorizedException();
+        }
+        userDAO.getUserData(request.username());
+        userDAO.getPassword(request.username());
         AuthData myAuthData = new AuthData(authDAO.generateAuthToken(request.username()), request.username());
         authDAO.insertAuth(myAuthData);
         return new LoginResult(myAuthData.username(), myAuthData.authToken());

@@ -30,6 +30,6 @@ public class ClearServiceTests {
         service.clear();
         Assertions.assertThrows(BadRequestException.class, () -> gameDAO.getGame(testGame.gameID()));
         Assertions.assertThrows(UnauthorizedException.class, () -> authDAO.confirmAuth(testAuth.authToken()));
-        Assertions.assertThrows(UnauthorizedException.class, () -> userDAO.getUser(testUser.username()));
+        Assertions.assertThrows(UnauthorizedException.class, () -> userDAO.getUserData(testUser.username()));
     }
 }

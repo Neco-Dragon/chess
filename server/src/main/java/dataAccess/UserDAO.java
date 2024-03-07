@@ -28,12 +28,13 @@ public interface UserDAO {
      * @throws DataAccessException if an error occurs during data access
      * @throws BadRequestException if the user is not in the Database
      */
-    UserData getUser(String username) throws DataAccessException, BadRequestException, UnauthorizedException;
+    UserData getUserData(String username) throws DataAccessException, BadRequestException, UnauthorizedException;
 
     /**Retrieves user data based on the password.
-     * @param password the password of the user to get
+     * @param username the username of the user to get
      * @return the retrieved user data
      * @throws DataAccessException if an error occurs during data access
      */
-    UserData getPassword(String username, String password) throws DataAccessException, BadRequestException, UnauthorizedException;
+    String getPassword(String username) throws DataAccessException, BadRequestException, UnauthorizedException;
+
 }

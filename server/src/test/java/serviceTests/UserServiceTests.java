@@ -35,7 +35,7 @@ public class UserServiceTests {
         Assertions.assertDoesNotThrow(() -> authDAO.confirmAuth(result.authToken()));
     }
     @Test
-    void registerFailureTest() throws DataAccessException, BadRequestException, AlreadyTakenException {
+    void registerFailureTest() throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
         RegisterRequest request = new RegisterRequest("myUser", "myPass", "me@email.com");
         userService.register(request);
         //user already taken
@@ -43,13 +43,13 @@ public class UserServiceTests {
     }
 
     @Test
-    void loginSuccessTest() throws BadRequestException, DataAccessException, AlreadyTakenException {
+    void loginSuccessTest() throws BadRequestException, DataAccessException, AlreadyTakenException, UnauthorizedException {
         userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         Assertions.assertDoesNotThrow(() -> userService.login(new LoginRequest("myUser", "myPass")));
     }
 
     @Test
-    void loginFailureTest() throws DataAccessException, BadRequestException, AlreadyTakenException {
+    void loginFailureTest() throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
         userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         //wrong username
         Assertions.assertThrows(UnauthorizedException.class, () -> userService.login(new LoginRequest("myWrongUser", "myPass")));

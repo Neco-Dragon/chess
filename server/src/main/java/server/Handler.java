@@ -31,7 +31,7 @@ public class Handler {
         return "{}";
     }
 
-    public Object register(Request request, Response response) throws DataAccessException, BadRequestException, AlreadyTakenException {
+    public Object register(Request request, Response response) throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
         RegisterRequest registerRequest = gson.fromJson(request.body(), RegisterRequest.class);
         RegisterResult result = this.userService.register(registerRequest);
         response.status(200);
