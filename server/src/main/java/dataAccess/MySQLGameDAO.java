@@ -5,6 +5,7 @@ import Exceptions.BadRequestException;
 import Exceptions.DataAccessException;
 
 import chess.ChessGame;
+import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
 
@@ -23,7 +24,7 @@ public class MySQLGameDAO implements GameDAO {
               `whiteUsername` varchar(256),
               `blackUsername` varchar(256),
               `gameName` varchar(256), NOT NULL
-              `game` Blob, NOT NULL
+              `game` TEXT, NOT NULL
               PRIMARY KEY (gameID)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
@@ -75,7 +76,8 @@ public class MySQLGameDAO implements GameDAO {
         var whiteUsername = rs.getString("whiteUsername");
         var blackUsername = rs.getString("blackUsername");
         var gameName = rs.getString("gameName");
-        var game = rs.getBlob("game"); //TODO: GSON Magic;
-        return new GameData(gameID, whiteUsername, blackUsername, gameName, new ChessGame()); //TODO: needs to be not a new chess game
+        var JsonString = rs.getString("game");
+        var game = new Gson().fromJson(JsonString, ChessGame.class);
+        return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
     }
 }
