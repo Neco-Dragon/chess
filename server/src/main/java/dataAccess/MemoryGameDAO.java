@@ -18,7 +18,7 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public GameData insertGame(GameData gameData) throws DataAccessException, AlreadyTakenException {
+    public GameData insertGame(GameData gameData) throws AlreadyTakenException {
         if (fakeGameDatabase.get(gameData.gameID()) != null){
             throw new AlreadyTakenException();
         }
@@ -27,7 +27,7 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public GameData getGame(int gameID) throws DataAccessException, BadRequestException {
+    public GameData getGame(int gameID) throws BadRequestException {
         GameData myGameData = fakeGameDatabase.get(gameID);
         if (myGameData == null){
             throw new BadRequestException();
@@ -41,7 +41,7 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void updateGame(int gameID, GameData gameData) throws DataAccessException, BadRequestException {
+    public void updateGame(int gameID, GameData gameData) throws BadRequestException {
         GameData myGameData = fakeGameDatabase.get(gameID);
         if (myGameData == null){
             throw new BadRequestException();
@@ -52,14 +52,14 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public void deleteGame(int gameID) throws DataAccessException, BadRequestException {
+    public void deleteGame(int gameID) throws BadRequestException {
         if (fakeGameDatabase.remove(gameID) == null){
             throw new BadRequestException();
         }
     }
 
     @Override
-    public void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws BadRequestException, DataAccessException, AlreadyTakenException {
+    public void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws BadRequestException, AlreadyTakenException {
         GameData myGame = fakeGameDatabase.get(gameID);
         GameData myNewGame;
         if (myGame == null){

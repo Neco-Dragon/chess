@@ -23,12 +23,12 @@ public class MemoryUserDAO implements UserDAO{
     }
 
     @Override
-    public UserData getUserData(String username) throws UnauthorizedException, DataAccessException {
+    public UserData getUserData(String username) {
         return fakeUserInfoDatabase.get(username);
     }
 
     @Override
-    public String getPassword(String username) throws DataAccessException, BadRequestException, UnauthorizedException {
+    public String getPassword(String username) {
         return getUserData(username).password();
     }
 }

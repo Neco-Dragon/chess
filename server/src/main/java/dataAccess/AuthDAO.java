@@ -26,13 +26,13 @@ public interface AuthDAO {
     AuthData getAuth(AuthData authData) throws DataAccessException, BadRequestException;
 
     /**Deletes Auth data.
-     * @param authData the Auth data to delete
+     * @param authToken the Auth data to delete
      * @throws DataAccessException if an error occurs during data access
      */
     void deleteAuth(String authToken) throws DataAccessException, BadRequestException, UnauthorizedException;
 
     /**Confirms Auth data.
-     * @param authData the Auth data to confirm
+     * @param authToken the Auth data to confirm
      * @throws DataAccessException if an error occurs during data access
      */
     void confirmAuth(String authToken) throws DataAccessException, UnauthorizedException;

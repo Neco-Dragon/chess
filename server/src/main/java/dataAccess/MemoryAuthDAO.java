@@ -17,7 +17,7 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public AuthData insertAuth(AuthData authData) throws DataAccessException, AlreadyTakenException {
+    public AuthData insertAuth(AuthData authData) throws AlreadyTakenException {
         if (fakeAuthTokenDatabase.get(authData.authToken()) != null){
             throw new AlreadyTakenException();
         }
@@ -26,7 +26,7 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public AuthData getAuth(AuthData authData) throws DataAccessException, BadRequestException {
+    public AuthData getAuth(AuthData authData) throws BadRequestException {
         if (fakeAuthTokenDatabase.get(authData.authToken()) == null){
             throw new BadRequestException();
         }
@@ -34,7 +34,7 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public void deleteAuth(String authToken) throws DataAccessException, BadRequestException, UnauthorizedException {
+    public void deleteAuth(String authToken) throws UnauthorizedException {
         if (fakeAuthTokenDatabase.get(authToken) == null){
             throw new UnauthorizedException();
         }
@@ -42,14 +42,14 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public void confirmAuth(String authToken) throws DataAccessException, UnauthorizedException {
+    public void confirmAuth(String authToken) throws UnauthorizedException {
         if (fakeAuthTokenDatabase.get(authToken) == null){
             throw new UnauthorizedException();
         }
     }
 
     @Override
-    public String getUsername(String authToken) throws DataAccessException, BadRequestException, UnauthorizedException {
+    public String getUsername(String authToken) throws UnauthorizedException {
         confirmAuth(authToken);
         return fakeAuthTokenDatabase.get(authToken).username();
     }

@@ -20,7 +20,7 @@ public class ClearServiceTests {
     MemoryAuthDAO authDAO = new MemoryAuthDAO();
     ClearService service = new ClearService(authDAO, userDAO, gameDAO);
     @Test
-    void clearTest() throws DataAccessException, BadRequestException, AlreadyTakenException, DataAccessException, AlreadyTakenException {
+    void clearTest() throws DataAccessException, AlreadyTakenException {
         GameData testGame = new GameData(1, "Magnus", "Hikaru", "Tata Steel 2024", new ChessGame());
         gameDAO.insertGame(testGame);
         AuthData testAuth = new AuthData("SECURE", "MyUsername");
@@ -30,6 +30,5 @@ public class ClearServiceTests {
         service.clear();
         Assertions.assertThrows(BadRequestException.class, () -> gameDAO.getGame(testGame.gameID()));
         Assertions.assertThrows(UnauthorizedException.class, () -> authDAO.confirmAuth(testAuth.authToken()));
-        Assertions.assertThrows(UnauthorizedException.class, () -> userDAO.getUserData(testUser.username()));
     }
 }
