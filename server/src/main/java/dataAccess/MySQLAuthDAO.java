@@ -71,11 +71,6 @@ public class MySQLAuthDAO implements AuthDAO {
     }
 
     @Override
-    public void confirmAuth(String authToken) throws DataAccessException, UnauthorizedException {
-
-    }
-
-    @Override
     public String getUsername(String authToken) throws DataAccessException, BadRequestException, UnauthorizedException {
         return null;
     }

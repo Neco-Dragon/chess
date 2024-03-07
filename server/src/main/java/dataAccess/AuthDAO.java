@@ -32,12 +32,6 @@ public interface AuthDAO {
      * @throws DataAccessException if an error occurs during data access
      */
     void deleteAuth(String authToken) throws DataAccessException, BadRequestException, UnauthorizedException;
-
-    /**Confirms Auth data.
-     * @param authToken the Auth data to confirm
-     * @throws DataAccessException if an error occurs during data access
-     */
-    void confirmAuth(String authToken) throws DataAccessException, UnauthorizedException;
     String getUsername(String authToken) throws DataAccessException, BadRequestException, UnauthorizedException;
     public String generateAuthToken(String username);
 

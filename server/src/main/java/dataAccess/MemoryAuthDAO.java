@@ -33,13 +33,6 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public void confirmAuth(String authToken) throws UnauthorizedException {
-        if (fakeAuthTokenDatabase.get(authToken) == null){
-            throw new UnauthorizedException();
-        }
-    }
-
-    @Override
     public String getUsername(String authToken) {
         return fakeAuthTokenDatabase.get(authToken).username();
     }
