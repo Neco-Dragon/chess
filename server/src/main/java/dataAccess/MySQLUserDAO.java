@@ -16,7 +16,7 @@ public class MySQLUserDAO implements UserDAO{
 
     private final String[] createStatements = {
             """
-            CREATE TABLE IF NOT EXISTS  users (
+            CREATE TABLE IF NOT EXISTS users (
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL,
               `email` varchar(256) NOT NULL,
@@ -25,17 +25,16 @@ public class MySQLUserDAO implements UserDAO{
             """
     };
 
-
     public MySQLUserDAO() throws DataAccessException {
         DatabaseManager.configureDatabase(createStatements);
     }
+
     @Override
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            String statement = "DROP TABLE users;"; // "TRUNCATE users"
+            String statement = "TRUNCATE TABLE users;"; // "DROP TABLE users;"
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                try (var ignored = ps.executeQuery()) {
-                }
+                ps.executeUpdate();
             }
         } catch (Exception e) {
             throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
@@ -47,18 +46,13 @@ public class MySQLUserDAO implements UserDAO{
         String u = userData.username();
         String p = userData.password();
         String e = userData.email();
-        String createString = "INSERT INTO users (username, password, email) VALUES ('?', '?', '?');";
         try (Connection conn = DatabaseManager.getConnection()) {
-            String statement = "SELECT username, password, email FROM users WHERE username=?";
-            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+            String createString = "INSERT INTO users (username, password, email) VALUES (?, ?, ?);";
+            try (PreparedStatement ps = conn.prepareStatement(createString)) {
                 ps.setString(1, u); //plug in username
                 ps.setString(2, p); //plug in password
                 ps.setString(3, e); //plug in email
-                try (var rs = ps.executeQuery()) {
-                    if (rs.next()) {
-                        return readUserData(rs);
-                    }
-                }
+                ps.executeUpdate();
             }
         } catch (Exception ex) {
             throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()));
@@ -81,7 +75,7 @@ public class MySQLUserDAO implements UserDAO{
         } catch (Exception e) {
             throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
         }
-        return null;
+        return null; //This needs to stay here to maintain the expectation throughout the code that no user data existing will return null
     }
 
     private UserData readUserData(ResultSet rs) throws SQLException {

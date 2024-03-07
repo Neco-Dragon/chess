@@ -11,7 +11,8 @@ public class Server {
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
 
-        UserDAO userDAO = new MemoryUserDAO();
+        //TODO: Switch from SQL to MEmory for testing
+        UserDAO userDAO = new MySQLUserDAO();
         AuthDAO authDAO = new MemoryAuthDAO();
         GameDAO gameDAO = new MemoryGameDAO();
 
