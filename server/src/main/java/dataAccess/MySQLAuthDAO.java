@@ -3,14 +3,11 @@ package dataAccess;
 import Exceptions.*;
 
 import model.AuthData;
-import model.UserData;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import static dataAccess.DatabaseManager.configureDatabase;
 
 public class MySQLAuthDAO implements AuthDAO {
 
@@ -64,7 +61,7 @@ public class MySQLAuthDAO implements AuthDAO {
     }
 
     @Override
-    public AuthData getAuth(AuthData authData) throws DataAccessException, BadRequestException {
+    public AuthData getAuth(String authToken) throws DataAccessException, BadRequestException {
         return null;
     }
 

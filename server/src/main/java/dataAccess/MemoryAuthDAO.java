@@ -23,18 +23,12 @@ public class MemoryAuthDAO implements AuthDAO{
     }
 
     @Override
-    public AuthData getAuth(AuthData authData) throws BadRequestException {
-        if (fakeAuthTokenDatabase.get(authData.authToken()) == null){
-            throw new BadRequestException();
-        }
-        return authData;
+    public AuthData getAuth(String authToken) throws BadRequestException {
+        return fakeAuthTokenDatabase.get(authToken);
     }
 
     @Override
     public void deleteAuth(String authToken) throws UnauthorizedException {
-        if (fakeAuthTokenDatabase.get(authToken) == null){
-            throw new UnauthorizedException();
-        }
         fakeAuthTokenDatabase.remove(authToken);
     }
 

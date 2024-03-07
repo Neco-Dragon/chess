@@ -17,13 +17,15 @@ public interface AuthDAO {
      */
     AuthData insertAuth(AuthData authData) throws DataAccessException, AlreadyTakenException;
 
-    /**Gets Auth data based on provided Auth information.
-     * @param authData the Auth data to get
+    /**
+     * Gets Auth data based on provided Auth information.
+     *
+     * @param authToken the Auth data to get
      * @return the retrieved Auth data
      * @throws DataAccessException if an error occurs during data access
      * @throws BadRequestException if the Auth token is not found
      */
-    AuthData getAuth(AuthData authData) throws DataAccessException, BadRequestException;
+    AuthData getAuth(String authToken) throws DataAccessException, BadRequestException;
 
     /**Deletes Auth data.
      * @param authToken the Auth data to delete

@@ -40,6 +40,9 @@ public class UserService {
     }
 
     public void logout(LogoutRequest request) throws DataAccessException, BadRequestException, UnauthorizedException {
+        if (authDAO.getAuth(request.authToken()) == null){
+            throw new UnauthorizedException();
+        }
         authDAO.deleteAuth(request.authToken());
     }
 
