@@ -23,6 +23,9 @@ public class GameService {
     public void joinGame(String authToken, JoinGameRequest request) throws BadRequestException, DataAccessException, UnauthorizedException, AlreadyTakenException {
         authDAO.confirmAuth(authToken);
         gameDAO.getGame(request.gameID());
+        if (authDAO.getUsername(authToken) == null){
+            throw new UnauthorizedException();
+        }
         gameDAO.joinGame(request.gameID(), request.playerColor(), authDAO.getUsername(authToken));
     }
 
