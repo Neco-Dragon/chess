@@ -51,11 +51,15 @@ public class UserService {
             throw new BadRequestException();
         }
         UserData userData = userDAO.getUserData(request.username());
-        if (!Objects.equals(request.password(), userData.password())){
+        if (userData != null){
+            if (!Objects.equals(request.password(), userData.password())){
+                throw new UnauthorizedException();
+            }
+        }
+        if (userData == null){
             throw new UnauthorizedException();
         }
-        userDAO.getUserData(request.username());
-        userDAO.getPassword(request.username());
+
         AuthData myAuthData = new AuthData(authDAO.generateAuthToken(request.username()), request.username());
         authDAO.insertAuth(myAuthData);
         return new LoginResult(myAuthData.username(), myAuthData.authToken());
