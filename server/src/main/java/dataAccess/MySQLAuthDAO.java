@@ -56,13 +56,13 @@ public class MySQLAuthDAO implements AuthDAO {
     private AuthData readAuthData(ResultSet rs) throws SQLException {
         var authToken = rs.getString("authToken");
         var username = rs.getString("username");
-        return new AuthData(username, authToken);
+        return new AuthData(authToken, username);
     }
 
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException, BadRequestException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            String statement = "SELECT authToken, username FROM authTokens WHERE authToken=?;";
+            String statement = "SELECT authToken, username FROM authTokens WHERE authToken=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 ps.setString(1, authToken);
                 try (var rs = ps.executeQuery()) {
