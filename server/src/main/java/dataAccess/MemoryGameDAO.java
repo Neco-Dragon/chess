@@ -19,9 +19,6 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public GameData insertGame(GameData gameData) throws AlreadyTakenException {
-        if (fakeGameDatabase.get(gameData.gameID()) != null){
-            throw new AlreadyTakenException();
-        }
         fakeGameDatabase.put(gameData.gameID(), gameData);
         return gameData;
     }
@@ -30,7 +27,6 @@ public class MemoryGameDAO implements GameDAO{
     public GameData getGame(int gameID) throws BadRequestException {
         return fakeGameDatabase.get(gameID);
     }
-
 
     @Override
     public ArrayList<GameData> listGames() throws DataAccessException {
