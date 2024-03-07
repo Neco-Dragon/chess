@@ -11,9 +11,9 @@ public class Server {
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
 
-        UserDAO userDAO = new MySQLUserDAO();
-        AuthDAO authDAO = new MySQLAuthDAO();
-        GameDAO gameDAO = new MySQLGameDAO();
+        UserDAO userDAO = new MemoryUserDAO();
+        AuthDAO authDAO = new MemoryAuthDAO();
+        GameDAO gameDAO = new MemoryGameDAO();
 
         //Exception Handler
         Spark.exception(ServerException.class, this::exceptionHandler);
