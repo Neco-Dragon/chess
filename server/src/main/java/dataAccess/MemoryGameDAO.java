@@ -13,7 +13,7 @@ public class MemoryGameDAO implements GameDAO{
      * */
     HashMap<Integer, GameData> fakeGameDatabase = new HashMap<>();
     @Override
-    public void clear() throws DataAccessException {
+    public void clear() {
         fakeGameDatabase.clear();
     }
 
@@ -28,12 +28,9 @@ public class MemoryGameDAO implements GameDAO{
 
     @Override
     public GameData getGame(int gameID) throws BadRequestException {
-        GameData myGameData = fakeGameDatabase.get(gameID);
-        if (myGameData == null){
-            throw new BadRequestException();
-        }
-        return myGameData;
+        return fakeGameDatabase.get(gameID);
     }
+
 
     @Override
     public ArrayList<GameData> listGames() throws DataAccessException {

@@ -24,7 +24,9 @@ public class GameService {
         if (authDAO.getAuth(authToken) == null){
             throw new UnauthorizedException();
         }
-        gameDAO.getGame(request.gameID());
+        if (gameDAO.getGame(request.gameID()) == null){
+            throw new BadRequestException();
+        }
         if (authDAO.getUsername(authToken) == null){
             throw new UnauthorizedException();
         }
