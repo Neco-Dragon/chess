@@ -17,10 +17,9 @@ public class MySQLAuthDAO implements AuthDAO {
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS  users (
+              `authToken` varchar(256) NOT NULL,
               `username` varchar(256) NOT NULL,
-              `password` varchar(256) NOT NULL,
-              `email` varchar(256) NOT NULL,
-              PRIMARY KEY (username)
+              PRIMARY KEY (authToken)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
     };
@@ -30,7 +29,7 @@ public class MySQLAuthDAO implements AuthDAO {
     @Override
     public void clear() throws DataAccessException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            String statement = "DROP TABLE authTokens;"; // "TRUNCATE users"
+            String statement = "DROP TABLE authTokens;"; // "TRUNCATE authTokens"
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 try (var ignored = ps.executeQuery()) {
                 }
@@ -46,10 +45,10 @@ public class MySQLAuthDAO implements AuthDAO {
         String u = authData.username();
         String createString = "INSERT INTO authTokens (authToken, username) VALUES ('?', '?');";
         try (Connection conn = DatabaseManager.getConnection()) {
-            String statement = "SELECT username, password, email FROM users WHERE username=?";
+            String statement = "SELECT authToken, username FROM users WHERE authToken=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
-                ps.setString(2, t); //plug in authToken
-                ps.setString(1, u); //plug in username
+                ps.setString(1, t); //plug in authToken
+                ps.setString(2, u); //plug in username
                 try (var rs = ps.executeQuery()) {
                     if (rs.next()) {
                         return readAuthData(rs);
