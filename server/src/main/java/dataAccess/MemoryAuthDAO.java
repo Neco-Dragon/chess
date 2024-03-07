@@ -1,9 +1,6 @@
 package dataAccess;
 
-import Exceptions.AlreadyTakenException;
-import Exceptions.BadRequestException;
-import Exceptions.DataAccessException;
-import Exceptions.UnauthorizedException;
+import Exceptions.*;
 import model.AuthData;
 
 import java.util.HashMap;
@@ -25,6 +22,14 @@ public class MemoryAuthDAO implements AuthDAO{
             throw new AlreadyTakenException();
         }
         fakeAuthTokenDatabase.put(authData.authToken(), authData);
+        return authData;
+    }
+
+    @Override
+    public AuthData getAuth(AuthData authData) throws DataAccessException, BadRequestException {
+        if (fakeAuthTokenDatabase.get(authData.authToken()) == null){
+            throw new BadRequestException();
+        }
         return authData;
     }
 

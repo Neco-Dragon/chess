@@ -9,8 +9,8 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessMove {
-    private final ChessPosition startPosition;
-    private final ChessPosition endPosition;
+    private ChessPosition startPosition;
+    private ChessPosition endPosition;
 
     @Override
     public String toString() {

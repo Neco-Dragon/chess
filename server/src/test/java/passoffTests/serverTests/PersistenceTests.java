@@ -111,7 +111,7 @@ public class PersistenceTests {
 
             }
         } catch (Exception ex) {
-            Assertions.fail("Unable to load database in order to verify persistence. Are you using dataAccess.DatabaseManager to set your credentials?");
+            Assertions.fail("Unable to load database in order to verify persistence. Are you using Exceptions.dataAccess.DatabaseManager to set your credentials?");
         }
 
         return rows;

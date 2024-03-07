@@ -4,7 +4,6 @@ import Exceptions.AlreadyTakenException;
 import Exceptions.BadRequestException;
 import Exceptions.DataAccessException;
 import Exceptions.UnauthorizedException;
-import com.google.gson.Gson;
 import model.UserData;
 
 import java.sql.Connection;
@@ -18,12 +17,12 @@ public class MySQLUserDAO implements UserDAO{
         configureDatabase();
     }
     @Override
-    public void clear() throws DataAccessException {
+    public void clear() {
         String clearString = "DROP TABLE pet;";
     }
 
     @Override
-    public UserData createUser(UserData userData) throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
+    public UserData createUser(UserData userData) {
         String u = userData.username();
         String p = userData.password();
         String e = userData.email();

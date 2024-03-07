@@ -1,9 +1,7 @@
 package dataAccess;
 
-import Exceptions.AlreadyTakenException;
-import Exceptions.BadRequestException;
-import Exceptions.DataAccessException;
-import Exceptions.UnauthorizedException;
+import Exceptions.*;
+
 import model.AuthData;
 
 public class MySQLAuthDAO implements AuthDAO {
@@ -18,6 +16,11 @@ public class MySQLAuthDAO implements AuthDAO {
 
     @Override
     public AuthData insertAuth(AuthData authData) throws DataAccessException, AlreadyTakenException {
+        return null;
+    }
+
+    @Override
+    public AuthData getAuth(AuthData authData) throws DataAccessException, BadRequestException {
         return null;
     }
 

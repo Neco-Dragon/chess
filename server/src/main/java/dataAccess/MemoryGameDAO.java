@@ -1,8 +1,6 @@
 package dataAccess;
 
-import Exceptions.AlreadyTakenException;
-import Exceptions.BadRequestException;
-import Exceptions.DataAccessException;
+import Exceptions.*;
 import chess.ChessGame;
 import model.GameData;
 
@@ -40,6 +38,24 @@ public class MemoryGameDAO implements GameDAO{
     @Override
     public ArrayList<GameData> listGames() throws DataAccessException {
         return(new ArrayList<>(fakeGameDatabase.values()));
+    }
+
+    @Override
+    public void updateGame(int gameID, GameData gameData) throws DataAccessException, BadRequestException {
+        GameData myGameData = fakeGameDatabase.get(gameID);
+        if (myGameData == null){
+            throw new BadRequestException();
+        }
+        else {
+            fakeGameDatabase.replace(gameID, gameData);
+        }
+    }
+
+    @Override
+    public void deleteGame(int gameID) throws DataAccessException, BadRequestException {
+        if (fakeGameDatabase.remove(gameID) == null){
+            throw new BadRequestException();
+        }
     }
 
     @Override

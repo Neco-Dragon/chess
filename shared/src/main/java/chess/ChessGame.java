@@ -199,4 +199,8 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {return this.board;}
+
+    public ChessGame deepCopy(){
+        return null;
+    }
 }

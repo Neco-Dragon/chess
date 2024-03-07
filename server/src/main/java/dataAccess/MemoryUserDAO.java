@@ -1,13 +1,9 @@
 package dataAccess;
 
-import Exceptions.AlreadyTakenException;
-import Exceptions.BadRequestException;
-import Exceptions.DataAccessException;
-import Exceptions.UnauthorizedException;
+import Exceptions.*;
 import model.UserData;
 
 import java.util.HashMap;
-import java.util.Objects;
 
 public class MemoryUserDAO implements UserDAO{
     /**
@@ -16,22 +12,19 @@ public class MemoryUserDAO implements UserDAO{
     HashMap<String, UserData> fakeUserInfoDatabase = new HashMap<>();
 
     @Override
-    public void clear() throws DataAccessException {
+    public void clear() {
         fakeUserInfoDatabase.clear();
     }
 
     @Override
-    public UserData createUser(UserData userData) throws DataAccessException, BadRequestException, AlreadyTakenException {
+    public UserData createUser(UserData userData) {
         fakeUserInfoDatabase.put(userData.username(), userData);
         return userData;
     }
 
     @Override
-    public UserData getUserData(String username) throws UnauthorizedException, BadRequestException, DataAccessException {
+    public UserData getUserData(String username) throws UnauthorizedException, DataAccessException {
         UserData myUserData = fakeUserInfoDatabase.get(username);
-        if (myUserData == null){
-            throw new DataAccessException();
-        }
         return myUserData;
     }
 

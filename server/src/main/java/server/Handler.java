@@ -1,13 +1,13 @@
 package server;
 
-import Exceptions.AlreadyTakenException;
-import Exceptions.BadRequestException;
-import Exceptions.DataAccessException;
-import Exceptions.UnauthorizedException;
+import Exceptions.*;
 import RequestClasses.*;
 import ResultClasses.*;
+
 import com.google.gson.Gson;
-import dataAccess.*;
+import dataAccess.AuthDAO;
+import dataAccess.GameDAO;
+import dataAccess.UserDAO;
 import service.ClearService;
 import service.GameService;
 import service.UserService;

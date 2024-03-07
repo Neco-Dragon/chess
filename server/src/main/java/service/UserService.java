@@ -1,14 +1,13 @@
 package service;
-import Exceptions.AlreadyTakenException;
-import Exceptions.BadRequestException;
-import Exceptions.DataAccessException;
-import Exceptions.UnauthorizedException;
+
 import RequestClasses.LoginRequest;
 import RequestClasses.LogoutRequest;
 import RequestClasses.RegisterRequest;
 import ResultClasses.LoginResult;
 import ResultClasses.RegisterResult;
-import dataAccess.*;
+import Exceptions.*;
+import dataAccess.AuthDAO;
+import dataAccess.UserDAO;
 import model.AuthData;
 import model.UserData;
 
@@ -31,9 +30,13 @@ public class UserService {
         if (myUserData.password() == null){
             throw new BadRequestException();
         }
-        if (userDAO.getUserData(myUserData.username()) != null){
-            throw new AlreadyTakenException();
+        UserData retrievedUserData = userDAO.getUserData(myUserData.username());
+        if (retrievedUserData != null) {
+            if (Objects.equals(retrievedUserData.username(), myUserData.username())){
+                throw new AlreadyTakenException();
+            }
         }
+
         userDAO.createUser(myUserData);
         authDAO.insertAuth(myAuthData);
         return new RegisterResult(myUserData.username(), myAuthData.authToken());

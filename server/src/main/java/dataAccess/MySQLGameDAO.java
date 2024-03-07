@@ -3,6 +3,7 @@ package dataAccess;
 import Exceptions.AlreadyTakenException;
 import Exceptions.BadRequestException;
 import Exceptions.DataAccessException;
+
 import chess.ChessGame;
 import model.GameData;
 
@@ -27,6 +28,16 @@ public class MySQLGameDAO implements GameDAO {
     @Override
     public ArrayList<GameData> listGames() throws DataAccessException {
         return null;
+    }
+
+    @Override
+    public void updateGame(int gameID, GameData gameData) throws DataAccessException, BadRequestException {
+
+    }
+
+    @Override
+    public void deleteGame(int gameID) throws DataAccessException, BadRequestException {
+
     }
 
     @Override

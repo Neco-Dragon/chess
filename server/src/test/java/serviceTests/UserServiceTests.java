@@ -1,15 +1,14 @@
 package serviceTests;
 
-import Exceptions.AlreadyTakenException;
-import Exceptions.BadRequestException;
-import Exceptions.DataAccessException;
-import Exceptions.UnauthorizedException;
 import RequestClasses.LoginRequest;
 import RequestClasses.LogoutRequest;
 import RequestClasses.RegisterRequest;
 import ResultClasses.LoginResult;
 import ResultClasses.RegisterResult;
-import dataAccess.*;
+import Exceptions.*;
+import dataAccess.MemoryAuthDAO;
+import dataAccess.MemoryGameDAO;
+import dataAccess.MemoryUserDAO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

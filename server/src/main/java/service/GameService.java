@@ -1,16 +1,14 @@
 package service;
 
-import Exceptions.AlreadyTakenException;
-import Exceptions.BadRequestException;
-import Exceptions.DataAccessException;
-import Exceptions.UnauthorizedException;
 import RequestClasses.InsertGameRequest;
 import RequestClasses.JoinGameRequest;
 import RequestClasses.ListGamesRequest;
 import ResultClasses.InsertGameResult;
 import ResultClasses.ListGamesResult;
 import chess.ChessGame;
-import dataAccess.*;
+import Exceptions.*;
+import dataAccess.AuthDAO;
+import dataAccess.GameDAO;
 import model.GameData;
 
 public class GameService {

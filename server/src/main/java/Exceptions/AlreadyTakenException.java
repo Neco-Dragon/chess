@@ -1,6 +1,8 @@
 package Exceptions;
 
-public class AlreadyTakenException extends ServerException{
+import Exceptions.ServerException;
+
+public class AlreadyTakenException extends ServerException {
 
     public AlreadyTakenException(String message) {
         super(message);
