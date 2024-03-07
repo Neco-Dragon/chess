@@ -27,8 +27,4 @@ public class MemoryUserDAO implements UserDAO{
         return fakeUserInfoDatabase.get(username);
     }
 
-    @Override
-    public String getPassword(String username) {
-        return getUserData(username).password();
-    }
 }

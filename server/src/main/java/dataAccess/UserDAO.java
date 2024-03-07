@@ -32,6 +32,4 @@ public interface UserDAO {
      * @return the retrieved user data
      * @throws DataAccessException if an error occurs during data access
      */
-    String getPassword(String username) throws DataAccessException, BadRequestException, UnauthorizedException;
-
 }
