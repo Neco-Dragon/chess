@@ -21,7 +21,9 @@ public class GameService {
     }
 
     public void joinGame(String authToken, JoinGameRequest request) throws BadRequestException, DataAccessException, UnauthorizedException, AlreadyTakenException {
-        authDAO.confirmAuth(authToken);
+        if (authDAO.getAuth(authToken) == null){
+            throw new UnauthorizedException();
+        }
         gameDAO.getGame(request.gameID());
         if (authDAO.getUsername(authToken) == null){
             throw new UnauthorizedException();
@@ -29,8 +31,10 @@ public class GameService {
         gameDAO.joinGame(request.gameID(), request.playerColor(), authDAO.getUsername(authToken));
     }
 
-    public InsertGameResult insertGame(String authToken, InsertGameRequest request) throws DataAccessException, UnauthorizedException, AlreadyTakenException {
-        authDAO.confirmAuth(authToken);
+    public InsertGameResult insertGame(String authToken, InsertGameRequest request) throws DataAccessException, UnauthorizedException, AlreadyTakenException, BadRequestException {
+        if (authDAO.getAuth(authToken) == null){
+            throw new UnauthorizedException();
+        }
         int gameID = gameDAO.generateNewGameID();
         String gameName = request.gameName();
         ChessGame chessGame = new ChessGame();
@@ -39,8 +43,10 @@ public class GameService {
         return new InsertGameResult(gameID);
     }
 
-    public ListGamesResult listGames(ListGamesRequest request) throws DataAccessException, UnauthorizedException {
-        authDAO.confirmAuth(request.authToken());
+    public ListGamesResult listGames(ListGamesRequest request) throws DataAccessException, UnauthorizedException, BadRequestException {
+        if (authDAO.getAuth(request.authToken()) == null) {
+            throw new UnauthorizedException();
+        }
         return new ListGamesResult(gameDAO.listGames());
     }
 }

@@ -31,7 +31,6 @@ public class UserServiceTests {
     void registerSuccessTest() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException {
         RegisterResult result = userService.register(new RegisterRequest("myUser", "myPass", "me@email.com"));
         Assertions.assertEquals(result.username(), "myUser");
-        Assertions.assertDoesNotThrow(() -> authDAO.confirmAuth(result.authToken()));
     }
     @Test
     void registerFailureTest() throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {

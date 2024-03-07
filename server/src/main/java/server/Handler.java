@@ -52,14 +52,14 @@ public class Handler {
         return "{}"; //This handle request has nothing in its return body.
     }
 
-    public Object listGames(Request request, Response response) throws UnauthorizedException, DataAccessException {
+    public Object listGames(Request request, Response response) throws UnauthorizedException, DataAccessException, BadRequestException {
         String authToken = request.headers("authorization");
         ListGamesResult result = this.gameService.listGames(new ListGamesRequest(authToken));
         response.status(200);
         return gson.toJson(result);
     }
 
-    public Object createGame(Request request, Response response) throws UnauthorizedException, DataAccessException, AlreadyTakenException {
+    public Object createGame(Request request, Response response) throws UnauthorizedException, DataAccessException, AlreadyTakenException, BadRequestException {
         String authToken = request.headers("authorization");
         InsertGameRequest insertGameRequest = gson.fromJson(request.body(), InsertGameRequest.class);
         InsertGameResult result = this.gameService.insertGame(authToken, insertGameRequest);

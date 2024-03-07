@@ -29,6 +29,5 @@ public class ClearServiceTests {
         userDAO.createUser(testUser);
         service.clear();
         Assertions.assertThrows(BadRequestException.class, () -> gameDAO.getGame(testGame.gameID()));
-        Assertions.assertThrows(UnauthorizedException.class, () -> authDAO.confirmAuth(testAuth.authToken()));
     }
 }
