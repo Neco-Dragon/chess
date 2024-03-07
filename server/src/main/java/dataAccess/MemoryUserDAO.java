@@ -22,15 +22,6 @@ public class MemoryUserDAO implements UserDAO{
 
     @Override
     public UserData createUser(UserData userData) throws DataAccessException, BadRequestException, AlreadyTakenException {
-        if (userData.username() == null){
-            throw new BadRequestException();
-        }
-        if (userData.password() == null){
-            throw new BadRequestException();
-        }
-        if (fakeUserInfoDatabase.get(userData.username()) != null){
-            throw new AlreadyTakenException();
-        }
         fakeUserInfoDatabase.put(userData.username(), userData);
         return userData;
     }

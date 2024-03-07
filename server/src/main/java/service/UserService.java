@@ -20,9 +20,18 @@ public class UserService {
         this.authDAO = authDAO;
         this.userDAO = userDAO;
     }
-    public RegisterResult register(RegisterRequest request) throws DataAccessException, BadRequestException, AlreadyTakenException {
+    public RegisterResult register(RegisterRequest request) throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
         UserData myUserData = new UserData(request.username(), request.password(), request.email());
         AuthData myAuthData = new AuthData(authDAO.generateAuthToken(myUserData.username()), myUserData.username());
+        if (myUserData.username() == null){
+            throw new BadRequestException();
+        }
+        if (myUserData.password() == null){
+            throw new BadRequestException();
+        }
+        if (userDAO.getUser(myUserData.username()) != null){
+            throw new AlreadyTakenException();
+        }
         userDAO.createUser(myUserData);
         authDAO.insertAuth(myAuthData);
         return new RegisterResult(myUserData.username(), myAuthData.authToken());
@@ -33,7 +42,6 @@ public class UserService {
     }
 
     public LoginResult login(LoginRequest request) throws BadRequestException, DataAccessException, UnauthorizedException, AlreadyTakenException {
-
         userDAO.getUser(request.username());
         userDAO.getPassword(request.username(), request.password());
         AuthData myAuthData = new AuthData(authDAO.generateAuthToken(request.username()), request.username());
