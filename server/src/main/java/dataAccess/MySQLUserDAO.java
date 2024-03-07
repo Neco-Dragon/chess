@@ -63,7 +63,7 @@ public class MySQLUserDAO implements UserDAO{
     @Override
     public UserData getUserData(String username) throws DataAccessException, BadRequestException, UnauthorizedException {
         try (Connection conn = DatabaseManager.getConnection()) {
-            String statement = "SELECT username, password, email FROM users WHERE username=?";
+            String statement = "SELECT username, password, email FROM users WHERE username=?;";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 ps.setString(1, username);
                 try (var rs = ps.executeQuery()) {
