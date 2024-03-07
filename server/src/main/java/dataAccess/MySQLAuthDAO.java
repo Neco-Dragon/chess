@@ -43,6 +43,7 @@ public class MySQLAuthDAO implements AuthDAO {
     public AuthData insertAuth(AuthData authData) throws DataAccessException, AlreadyTakenException {
         String t = authData.authToken();
         String u = authData.username();
+        //TODO: When do we use createString and when do we use statement
         String createString = "INSERT INTO authTokens (authToken, username) VALUES ('?', '?');";
         try (Connection conn = DatabaseManager.getConnection()) {
             String statement = "SELECT authToken, username FROM users WHERE authToken=?";

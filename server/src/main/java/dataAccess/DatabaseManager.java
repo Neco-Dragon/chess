@@ -82,4 +82,15 @@ public class DatabaseManager {
             throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }
+
+    static void executeQuery(){
+        return;
+    }
+    static void prepareStatement(){
+        return;
+    }
+    static void openConnection(){
+        return;
+    }
+
 }
