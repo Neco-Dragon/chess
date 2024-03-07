@@ -14,8 +14,20 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class MySQLUserDAO implements UserDAO{
 
+    private final String[] createStatements = {
+            """
+            CREATE TABLE IF NOT EXISTS  users (
+              `username` varchar(256) NOT NULL,
+              `password` varchar(256) NOT NULL,
+              `email` varchar(256) NOT NULL,
+              PRIMARY KEY (username)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
+    };
+
+
     public MySQLUserDAO() throws DataAccessException {
-        configureDatabase();
+        DatabaseManager.configureDatabase(createStatements);
     }
     @Override
     public void clear() throws DataAccessException {
@@ -70,30 +82,6 @@ public class MySQLUserDAO implements UserDAO{
             throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
         }
         return null;
-    }
-
-    private final String[] createStatements = {
-            """
-            CREATE TABLE IF NOT EXISTS  users (
-              `username` varchar(256) NOT NULL,
-              `password` varchar(256) NOT NULL,
-              `email` varchar(256) NOT NULL,
-              PRIMARY KEY (username)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
-    };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(String.format("Unable to configure database: %s", ex.getMessage()));
-        }
     }
 
     private UserData readUserData(ResultSet rs) throws SQLException {
