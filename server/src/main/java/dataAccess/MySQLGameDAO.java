@@ -26,7 +26,7 @@ public class MySQLGameDAO implements GameDAO {
               `gameID` int NOT NULL,
               `whiteUsername` varchar(256),
               `blackUsername` varchar(256),
-              `gameName` varchar(256) NOT NULL,
+              `gameName` varchar(256),
               `game` TEXT NOT NULL,
               PRIMARY KEY (gameID)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
