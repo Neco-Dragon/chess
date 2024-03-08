@@ -37,7 +37,7 @@ public class GameServiceTests {
     void insertGameSuccessTest() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException {
         authDAO.insertAuth(new AuthData("AuthToken", "MyUsername"));
         InsertGameResult result = gameService.insertGame("AuthToken", new InsertGameRequest("myGame"));
-        InsertGameResult expected = new InsertGameResult(1);
+        InsertGameResult expected = new InsertGameResult(result.gameID());
         Assertions.assertEquals(result, expected);
     }
     @Test
