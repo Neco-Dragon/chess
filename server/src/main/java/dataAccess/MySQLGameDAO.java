@@ -26,7 +26,7 @@ public class MySQLGameDAO implements GameDAO {
               `gameID` int NOT NULL,
               `whiteUsername` varchar(256),
               `blackUsername` varchar(256),
-              `gameName` varchar(256) NOT NULL,
+              `gameName` varchar(256),
               `game` TEXT NOT NULL,
               PRIMARY KEY (gameID)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
@@ -93,7 +93,20 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public ArrayList<GameData> listGames() throws DataAccessException {
-        return null;
+        ArrayList<GameData> games = new ArrayList<>();
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String statement = "SELECT * FROM games";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        games.add(readGameData(rs));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
+        }
+        return games;
     }
 
     @Override
