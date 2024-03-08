@@ -98,23 +98,18 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws BadRequestException, DataAccessException, AlreadyTakenException {
-        GameData game = getGame(gameID);
+        String createString;
+        if (clientColor == ChessGame.TeamColor.WHITE){
+            createString = "UPDATE games SET whiteUsername = ? WHERE gameID = ?;";
+        } else if (clientColor == ChessGame.TeamColor.BLACK) {
+            createString = "UPDATE games SET blackUsername = ? WHERE gameID = ?;";
+        } else { //observer idempotence
+            return;
+        }
         try (Connection conn = DatabaseManager.getConnection()) {
-            String createString = "INSERT INTO games (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?);";
             try (PreparedStatement ps = conn.prepareStatement(createString)) {
-                ps.setInt(1, gameID);
-                if (clientColor == ChessGame.TeamColor.WHITE){
-                    ps.setString(2, clientUsername);
-                    ps.setNull(3, NULL);
-                } else if (clientColor == ChessGame.TeamColor.BLACK) {
-                    ps.setNull(2, NULL);
-                    ps.setString(3, clientUsername);
-                }
-                else {
-                    return;
-                }
-                ps.setString(4, game.gameName()); //plug in game name
-                ps.setString(5, new Gson().toJson(game)); //plug in game
+                ps.setString(1, clientUsername);
+                ps.setInt(2, gameID);
                 ps.executeUpdate();
             }
         } catch (Exception ex) {
