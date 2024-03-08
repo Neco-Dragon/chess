@@ -129,7 +129,7 @@ public class MySQLGameDAO implements GameDAO {
             throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()));
         }
     }
-    public GameData readGameData(ResultSet rs) throws SQLException {
+    private GameData readGameData(ResultSet rs) throws SQLException {
         var gameID = rs.getInt("gameID");
         var whiteUsername = rs.getString("whiteUsername");
         var blackUsername = rs.getString("blackUsername");
