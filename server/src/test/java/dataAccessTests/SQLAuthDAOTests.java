@@ -1,6 +1,9 @@
 package dataAccessTests;
 
+import Exceptions.AlreadyTakenException;
+import Exceptions.BadRequestException;
 import Exceptions.DataAccessException;
+import Exceptions.UnauthorizedException;
 import dataAccess.MySQLAuthDAO;
 import model.AuthData;
 import org.junit.jupiter.api.AfterEach;
@@ -26,9 +29,15 @@ public class SQLAuthDAOTests {
 
         // data is not null
         Assertions.assertNotNull(authData);
-        
+
         Assertions.assertEquals("testAuthToken", authData.authToken());
         Assertions.assertEquals("testUser", authData.username());
+    }
+    @Test
+    public void testInsertAuthFailure() throws Exception {
+        Assertions.assertThrows(DataAccessException.class, () -> {
+            authDAO.insertAuth(new AuthData(null, "testUser"));
+        });
     }
 
     @Test
@@ -48,13 +57,43 @@ public class SQLAuthDAOTests {
         // Try to retrieve non-existing authentication data
         Assertions.assertNull(authDAO.getAuth("nonExistingAuthToken"));
     }
+    @Test
+    public void testDeleteAuth() throws Exception {
+        authDAO.insertAuth(new AuthData("authToken", "Username"));
+        Assertions.assertDoesNotThrow(() -> {
+            authDAO.deleteAuth("authToken");
+        });
+    }
+
+    @Test
+    public void testDeleteAuthFailure() {
+        Assertions.assertDoesNotThrow(() -> {
+            authDAO.deleteAuth("nonExistingAuthToken");
+        });
+
+    }
+
+    @Test
+    public void testGetUsername() throws DataAccessException, AlreadyTakenException, UnauthorizedException, BadRequestException {
+        authDAO.insertAuth(new AuthData("authToken", "testUser"));
+        Assertions.assertEquals("testUser", authDAO.getUsername("authToken"));
+    }
+
+    @Test
+    public void testGetUsernameFailure() throws UnauthorizedException, BadRequestException, DataAccessException {
+        Assertions.assertThrows(Exception.class, () -> authDAO.getUsername("nonExistingAuthToken"));
+    }
 
     @Test
     public void testGenerateAuthToken() throws Exception {
         String authToken = authDAO.generateAuthToken("testUser");
 
-        //the generated authentication token is not null or empty
         Assertions.assertNotNull(authToken);
         Assertions.assertNotEquals("", authToken);
+    }
+    @Test
+    public void testGenerateAuthTokenFailure() throws Exception {
+        //Note, it does not really make sense for this method to fail, but this is the expected behavior in the face of unexpected input
+        Assertions.assertDoesNotThrow(() -> authDAO.generateAuthToken(""));
     }
 }
