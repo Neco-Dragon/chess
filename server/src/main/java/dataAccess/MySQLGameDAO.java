@@ -98,7 +98,7 @@ public class MySQLGameDAO implements GameDAO {
             String statement = "SELECT * FROM games";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {
                 try (var rs = ps.executeQuery()) {
-                    if (rs.next()) {
+                    while (rs.next()) {
                         games.add(readGameData(rs));
                     }
                 }
