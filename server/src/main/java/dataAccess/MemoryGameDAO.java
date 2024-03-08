@@ -29,7 +29,7 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public ArrayList<GameData> listGames() throws DataAccessException {
+    public ArrayList<GameData> listGames() {
         return(new ArrayList<>(fakeGameDatabase.values()));
     }
 
@@ -48,8 +48,5 @@ public class MemoryGameDAO implements GameDAO{
             return; //do nothing; they are a spectator;
         }
         fakeGameDatabase.put(gameID, myNewGame);
-    }
-    public int generateNewGameID() {
-        return fakeGameDatabase.size() + 1;
     }
 }

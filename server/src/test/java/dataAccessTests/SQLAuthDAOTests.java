@@ -67,6 +67,7 @@ public class SQLAuthDAOTests {
 
     @Test
     public void testDeleteAuthFailure() {
+        //When it fails, we shouldn't know, because there's no authToken of that type in the end either way
         Assertions.assertDoesNotThrow(() -> {
             authDAO.deleteAuth("nonExistingAuthToken");
         });

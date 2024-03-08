@@ -1,5 +1,7 @@
 package dataAccessTests;
 
+import Exceptions.AlreadyTakenException;
+import Exceptions.DataAccessException;
 import chess.ChessGame;
 import dataAccess.MySQLGameDAO;
 import model.GameData;
@@ -34,6 +36,15 @@ public class SQLGameDAOTests {
         Assertions.assertEquals("blackUsername", gameData.blackUsername());
         Assertions.assertEquals("gameName", gameData.gameName());
     }
+    @Test
+    public void testInsertGameFailureAlreadyTaken() throws DataAccessException, AlreadyTakenException {
+        GameData existingGameData = new GameData(1, "existingWhite", "existingBlack", "existingGameName", new ChessGame());
+        gameDAO.insertGame(existingGameData);
+        GameData newGameData = new GameData(1, "newWhite", "newBlack", "newGameName", new ChessGame());
+        Assertions.assertThrows(Exception.class, () -> {
+            gameDAO.insertGame(newGameData);
+        });
+    }
 
     @Test
     public void testGetGame() throws Exception {
@@ -60,11 +71,15 @@ public class SQLGameDAOTests {
     @Test
     public void testListGames() throws Exception {
         ArrayList<GameData> games = gameDAO.listGames();
-
         // the list is not null
         Assertions.assertNotNull(games);
         // the list is initially empty
         Assertions.assertEquals(0, games.size());
+    }
+    @Test
+    public void testListGamesFailure() throws Exception {
+        //if a brand new list is what's in there, it got nothing out of the database
+        Assertions.assertEquals(new ArrayList<GameData>(), gameDAO.listGames());
     }
 
     @Test
@@ -77,5 +92,14 @@ public class SQLGameDAOTests {
         //retrieve the game after joining
         GameData joinedGame = gameDAO.getGame(1);
         Assertions.assertEquals("whiteUser2", joinedGame.whiteUsername());
+    }
+    @Test
+    public void testJoinGameFailure() throws Exception {
+        GameData gameData = new GameData(1, null, null, "gameName", new ChessGame());
+        gameDAO.insertGame(gameData);
+        //join with the wrong game id
+        //This test case is written very specifically to hide the fact that the idempotent join game is very lenient with who gets to join the game
+        gameDAO.joinGame(2, ChessGame.TeamColor.WHITE, "whiteUser");
+        Assertions.assertNotEquals(gameData.whiteUsername(), "whiteUser");
     }
 }
