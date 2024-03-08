@@ -14,6 +14,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Random;
+
+import static java.sql.Types.NULL;
 
 public class MySQLGameDAO implements GameDAO {
 
@@ -23,8 +26,8 @@ public class MySQLGameDAO implements GameDAO {
               `gameID` int NOT NULL,
               `whiteUsername` varchar(256),
               `blackUsername` varchar(256),
-              `gameName` varchar(256), NOT NULL
-              `game` TEXT, NOT NULL
+              `gameName` varchar(256) NOT NULL,
+              `game` TEXT NOT NULL,
               PRIMARY KEY (gameID)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
             """
@@ -47,12 +50,45 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public GameData insertGame(GameData gameData) throws DataAccessException, AlreadyTakenException {
-        return null;
+        //int gameID, String whiteUsername, String blackUsername, String gameName, ChessGame game
+        int id = gameData.gameID();
+        String wu = gameData.whiteUsername();
+        String bu = gameData.blackUsername();
+        String gn = gameData.gameName();
+        String game = new Gson().toJson(gameData.game());
+        String createString = "INSERT INTO games (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?);";
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (PreparedStatement ps = conn.prepareStatement(createString)) {
+                ps.setInt(1, id); //plug in gameID
+                ps.setString(2, wu); //plug in whiteusername
+                ps.setString(3, bu); //plug in blackusername
+                ps.setString(4, gn); //plug in gn
+                ps.setString(5, game); //plug in game
+                ps.executeUpdate();
+            }
+        } catch (Exception ex) {
+            throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()));
+        }
+        return gameData;
     }
 
     @Override
     public GameData getGame(int gameID) throws DataAccessException, BadRequestException {
-        return null;
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String statement = "SELECT * FROM games WHERE gameID=?";
+            try (PreparedStatement ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, gameID);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readGameData(rs);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException(String.format("Unable to read data: %s", e.getMessage()));
+        }
+        return null; //This needs to stay here to maintain the expectation throughout the code that no user data existing will return null
+
     }
 
     @Override
@@ -62,16 +98,36 @@ public class MySQLGameDAO implements GameDAO {
 
     @Override
     public void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws BadRequestException, DataAccessException, AlreadyTakenException {
-
+        GameData game = getGame(gameID);
+        try (Connection conn = DatabaseManager.getConnection()) {
+            String createString = "INSERT INTO games (gameID, whiteUsername, blackUsername, gameName, game) VALUES (?, ?, ?, ?, ?);";
+            try (PreparedStatement ps = conn.prepareStatement(createString)) {
+                ps.setInt(1, gameID);
+                if (clientColor == ChessGame.TeamColor.WHITE){
+                    ps.setString(2, clientUsername);
+                } else if (clientColor == ChessGame.TeamColor.BLACK) {
+                    ps.setString(3, clientUsername);
+                }
+                else {
+                    ps.setNull(3, NULL);
+                }
+                ps.setString(4, game.gameName()); //plug in game name
+                ps.setString(5, new Gson().toJson(game)); //plug in game
+                ps.executeUpdate();
+            }
+        } catch (Exception ex) {
+            throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()));
+        }
     }
 
     @Override
     public int generateNewGameID() {
-        return 0;
+        Random r = new Random();
+        return r.nextInt(); //TODO: This is terrible if I have many games, but odds are very small for less than 12 games
     }
 
 
-    private GameData readGameData(ResultSet rs) throws SQLException {
+    public GameData readGameData(ResultSet rs) throws SQLException {
         var gameID = rs.getInt("gameID");
         var whiteUsername = rs.getString("whiteUsername");
         var blackUsername = rs.getString("blackUsername");
