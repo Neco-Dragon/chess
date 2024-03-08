@@ -105,11 +105,13 @@ public class MySQLGameDAO implements GameDAO {
                 ps.setInt(1, gameID);
                 if (clientColor == ChessGame.TeamColor.WHITE){
                     ps.setString(2, clientUsername);
+                    ps.setNull(3, NULL);
                 } else if (clientColor == ChessGame.TeamColor.BLACK) {
+                    ps.setNull(2, NULL);
                     ps.setString(3, clientUsername);
                 }
                 else {
-                    ps.setNull(3, NULL);
+                    return;
                 }
                 ps.setString(4, game.gameName()); //plug in game name
                 ps.setString(5, new Gson().toJson(game)); //plug in game
@@ -119,14 +121,6 @@ public class MySQLGameDAO implements GameDAO {
             throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()));
         }
     }
-
-    @Override
-    public int generateNewGameID() {
-        Random r = new Random();
-        return r.nextInt(); //TODO: This is terrible if I have many games, but odds are very small for less than 12 games
-    }
-
-
     public GameData readGameData(ResultSet rs) throws SQLException {
         var gameID = rs.getInt("gameID");
         var whiteUsername = rs.getString("whiteUsername");

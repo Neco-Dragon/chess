@@ -14,6 +14,7 @@ import model.GameData;
 public class GameService {
     AuthDAO authDAO;
     GameDAO gameDAO;
+    private int nextGameid = 0;
 
     public GameService(AuthDAO authDAO, GameDAO gameDAO) {
         this.authDAO = authDAO;
@@ -50,7 +51,7 @@ public class GameService {
         if (authDAO.getAuth(authToken) == null){
             throw new UnauthorizedException();
         }
-        int gameID = gameDAO.generateNewGameID();
+        int gameID = nextGameid; nextGameid++;
         String gameName = request.gameName();
         ChessGame chessGame = new ChessGame();
         GameData myGameData = new GameData(gameID, null, null, gameName, chessGame);
