@@ -61,8 +61,8 @@ public class Handler {
 
     public Object createGame(Request request, Response response) throws UnauthorizedException, DataAccessException, AlreadyTakenException, BadRequestException {
         String authToken = request.headers("authorization");
-        InsertGameRequest insertGameRequest = gson.fromJson(request.body(), InsertGameRequest.class);
-        InsertGameResult result = this.gameService.insertGame(authToken, insertGameRequest);
+        CreateGameRequest createGameRequest = gson.fromJson(request.body(), CreateGameRequest.class);
+        InsertGameResult result = this.gameService.insertGame(authToken, createGameRequest);
         response.status(200);
         return gson.toJson(result);
     }

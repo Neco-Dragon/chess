@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import service.ClearService;
 import service.GameService;
-import RequestClasses.InsertGameRequest;
+import RequestClasses.CreateGameRequest;
 import RequestClasses.JoinGameRequest;
 import RequestClasses.ListGamesRequest;
 import ResultClasses.InsertGameResult;
@@ -36,14 +36,14 @@ public class GameServiceTests {
     @Test
     void insertGameSuccessTest() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException {
         authDAO.insertAuth(new AuthData("AuthToken", "MyUsername"));
-        InsertGameResult result = gameService.insertGame("AuthToken", new InsertGameRequest("myGame"));
+        InsertGameResult result = gameService.insertGame("AuthToken", new CreateGameRequest("myGame"));
         InsertGameResult expected = new InsertGameResult(result.gameID());
         Assertions.assertEquals(result, expected);
     }
     @Test
     void insertGameFailureTest() throws DataAccessException, BadRequestException, UnauthorizedException, AlreadyTakenException {
         authDAO.insertAuth(new AuthData("AuthToken", "MyUsername"));
-        InsertGameRequest request = new InsertGameRequest("myGame");
+        CreateGameRequest request = new CreateGameRequest("myGame");
         Assertions.assertThrows(UnauthorizedException.class, () -> gameService.insertGame("InvalidAuthToken", request));
     }
 

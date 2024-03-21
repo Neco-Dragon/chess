@@ -1,6 +1,6 @@
 package service;
 
-import RequestClasses.InsertGameRequest;
+import RequestClasses.CreateGameRequest;
 import RequestClasses.JoinGameRequest;
 import RequestClasses.ListGamesRequest;
 import ResultClasses.InsertGameResult;
@@ -47,7 +47,7 @@ public class GameService {
         gameDAO.joinGame(request.gameID(), request.playerColor(), authDAO.getUsername(authToken));
     }
 
-    public InsertGameResult insertGame(String authToken, InsertGameRequest request) throws DataAccessException, UnauthorizedException, AlreadyTakenException, BadRequestException {
+    public InsertGameResult insertGame(String authToken, CreateGameRequest request) throws DataAccessException, UnauthorizedException, AlreadyTakenException, BadRequestException {
         if (authDAO.getAuth(authToken) == null){
             throw new UnauthorizedException();
         }
