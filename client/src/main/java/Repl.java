@@ -41,7 +41,12 @@ public class Repl {
                         }
                         break;
                     case "login":
-                        facade.login(new LoginRequest(params[0], params[1]));
+                        try{
+                            facade.login(new LoginRequest(params[0], params[1]));
+                        }
+                        catch (FacadeException e){
+                            System.out.println(e.getMessage());
+                        }
                         break;
                     case "quit":
                         facade.quit();
@@ -60,18 +65,60 @@ public class Repl {
                 var cmd = (tokens.length > 0) ? tokens[0] : "help";
                 var params = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (cmd) {
-                    case "logout" -> facade.logout(new LogoutRequest(facade.authToken));
-                    case "createGame" -> facade.createGame(new CreateGameRequest(params[0]));
-                    case "listGames" -> facade.listGames(new ListGamesRequest(facade.authToken));
+                    case ("logout"):
+                        try{
+                            facade.logout(new LogoutRequest(facade.authToken));
+                            loginState = LoginState.LOGGED_OUT;
+                        }
+                        catch (FacadeException e){
+                            System.out.println(e.getMessage());
+                        }
+                    case ("createGame"):
+                        try {
+                            facade.createGame(new CreateGameRequest(params[0]));
+                        }
+                        catch (FacadeException e){
+                            System.out.println(e.getMessage());
+                        }
+                    case ("listGames"):
+                        try {
+                            facade.listGames(new ListGamesRequest(facade.authToken));
+                        }
+                        catch (FacadeException e){
+                            System.out.println(e.getMessage());
+                        }
 
                     //TODO: cast the joinGame inputs to valid join game request objects
-                    case "joinGame" -> facade.joinGame(new JoinGameRequest(ChessGame.TeamColor.WHITE, 1)); //TODO: Change filler values
-                    case "quit" -> facade.quit();
-                    case "help" -> System.out.println(help());
-                    default -> System.out.println("Invalid Command");
+                    case ("joinGame"):
+                        try {
+                            ChessGame.TeamColor teamColor = getTeamColor(params[0]);
+                            int id = Integer.parseInt(params[1]);
+                            facade.joinGame(new JoinGameRequest(teamColor, id));
+                        }
+                        catch (FacadeException e){
+                            System.out.println(e.getMessage());
+                        }
+                    case ("quit"):
+                        facade.quit();
+                    case ("help"):
+                        System.out.println(help());
+                    default: System.out.println("Invalid Command");
                 };
             }
         }
+    }
+
+    private static ChessGame.TeamColor getTeamColor(String teamColorString) throws FacadeException {
+        ChessGame.TeamColor teamColor;
+        if (teamColorString.equalsIgnoreCase("white")){
+            teamColor = ChessGame.TeamColor.WHITE;
+        } else if (teamColorString.equalsIgnoreCase("black")) {
+            teamColor = ChessGame.TeamColor.BLACK;
+        }
+        else {
+            throw new FacadeException("Not a valid team color");
+        }
+        return teamColor;
     }
 
     public String help(){
