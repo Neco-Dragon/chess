@@ -1,4 +1,5 @@
 import RequestClasses.*;
+import ResultClasses.LoginResult;
 import ResultClasses.RegisterResult;
 import com.google.gson.Gson;
 
@@ -38,11 +39,35 @@ public class ServerFacade {
     }
     public void login(LoginRequest loginRequest) throws Exception{
         HttpURLConnection http = makeRequest("/session", "POST", Boolean.TRUE, loginRequest);
-
+        // Output the response body
+        switch (http.getResponseCode()){
+            case (200): //Code for a successful request
+                try (InputStream respBody = http.getInputStream()) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+                    LoginResult loginResult = new Gson().fromJson(inputStreamReader, ResultClasses.LoginResult.class);
+                    this.authToken = loginResult.authToken();
+                }
+                break;
+            case (401):
+                throw new FacadeException("[401] Error: unauthorized");
+            default:
+                System.out.println(http.getResponseCode() + ") Error: An unknown error occurred. Try again.");
+        }
     }
     public void logout(LogoutRequest logoutRequest) throws Exception{
         HttpURLConnection http = makeRequest("/session", "DELETE", Boolean.FALSE, logoutRequest);
-
+        // Output the response body
+        switch (http.getResponseCode()){
+            case (200): //Code for a successful request
+                try (InputStream respBody = http.getInputStream()) {
+                    authToken = null; //TODO: depending on how the tests work, they might expect the authToken to still be there
+                }
+                break;
+            case (401):
+                throw new FacadeException("[401] Error: unauthorized");
+            default:
+                System.out.println(http.getResponseCode() + ") Error: An unknown error occurred. Try again.");
+        }
     }
     public void createGame(CreateGameRequest createGameRequest) throws Exception{
         HttpURLConnection http = makeRequest("/game", "POST", Boolean.TRUE, createGameRequest);

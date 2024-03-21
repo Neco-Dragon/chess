@@ -35,6 +35,7 @@ public class Repl {
                         try{
                             facade.register(new RegisterRequest(params[0], params[1], params[2]));
                             loginState = LoginState.LOGGED_IN;
+                            System.out.println("Registration successful. You are now logged in.");
                         }
                         catch (FacadeException e){
                             System.out.println(e.getMessage());
@@ -43,6 +44,7 @@ public class Repl {
                     case "login":
                         try{
                             facade.login(new LoginRequest(params[0], params[1]));
+                            System.out.println("Login successful. You are now logged in.");
                         }
                         catch (FacadeException e){
                             System.out.println(e.getMessage());
@@ -69,6 +71,7 @@ public class Repl {
                         try{
                             facade.logout(new LogoutRequest(facade.authToken));
                             loginState = LoginState.LOGGED_OUT;
+                            System.out.println("Logout successful. You are now logged out.");
                         }
                         catch (FacadeException e){
                             System.out.println(e.getMessage());
@@ -76,6 +79,7 @@ public class Repl {
                     case ("createGame"):
                         try {
                             facade.createGame(new CreateGameRequest(params[0]));
+                            System.out.println("Game creation successful. Type listGames to see your game. Type joinGame to join.");
                         }
                         catch (FacadeException e){
                             System.out.println(e.getMessage());
@@ -83,17 +87,17 @@ public class Repl {
                     case ("listGames"):
                         try {
                             facade.listGames(new ListGamesRequest(facade.authToken));
+                            //TODO: Print the fetching games
                         }
                         catch (FacadeException e){
                             System.out.println(e.getMessage());
                         }
-
-                    //TODO: cast the joinGame inputs to valid join game request objects
                     case ("joinGame"):
                         try {
                             ChessGame.TeamColor teamColor = getTeamColor(params[0]);
                             int id = Integer.parseInt(params[1]);
                             facade.joinGame(new JoinGameRequest(teamColor, id));
+                            System.out.println("Game Join successful.");
                         }
                         catch (FacadeException e){
                             System.out.println(e.getMessage());
