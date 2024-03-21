@@ -1,5 +1,6 @@
 import RequestClasses.*;
 import chess.ChessGame;
+import org.eclipse.jetty.server.Authentication;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -31,9 +32,13 @@ public class Repl {
                 var params = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (cmd) {
                     case "register":
-                        facade.register(new RegisterRequest(params[0], params[1], params[2]));
-//                        if facade.errorMessage
-//                        this.loginState = LoginState.LOGGED_IN;
+                        try{
+                            facade.register(new RegisterRequest(params[0], params[1], params[2]));
+                            loginState = LoginState.LOGGED_IN;
+                        }
+                        catch (FacadeException e){
+                            System.out.println(e.getMessage());
+                        }
                         break;
                     case "login":
                         facade.login(new LoginRequest(params[0], params[1]));

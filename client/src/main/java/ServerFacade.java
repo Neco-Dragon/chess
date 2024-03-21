@@ -28,11 +28,9 @@ public class ServerFacade {
                 }
                 break;
             case (400):
-                System.out.println("[400] Error: bad request");
-                break;
+                throw new FacadeException("[400] Error: bad request");
             case (403):
-                System.out.println("[403] Error: already taken");
-                break;
+                throw new FacadeException("[403] Error: already taken");
             default:
                 System.out.println(http.getResponseCode() + ") Error: An unknown error occurred. Try again.");
         }
