@@ -1,22 +1,21 @@
-import RequestClasses.LoginRequest;
-import RequestClasses.LogoutRequest;
-import RequestClasses.RegisterRequest;
+import RequestClasses.*;
+import chess.ChessGame;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
 public class Repl {
+
     private enum LoginState {
         LOGGED_IN,
         LOGGED_OUT
     }
-    private ServerFacade s;
+    private ServerFacade facade;
 
     private LoginState loginState = LoginState.LOGGED_OUT;
-//    TODO: Add a way to call ServerFacade handler methods.
+
     public Repl(String serverUrl) {
-        s = new ServerFacade();
+        facade = new ServerFacade(8080); //TODO: is this the right port?
     }
 
     public void run() throws Exception {
@@ -31,11 +30,23 @@ public class Repl {
                 var cmd = (tokens.length > 0) ? tokens[0] : "help";
                 var params = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (cmd) {
-                    case "register" -> s.register(new RegisterRequest(params[0], params[1], params[2]));
-                    case "login" -> s.login(new LoginRequest(params[0], params[1]));
-                    case "quit" -> s.quit();
-                    case "help" -> System.out.println(help());
-                    default -> System.out.println("Invalid Command");
+                    case "register":
+                        facade.register(new RegisterRequest(params[0], params[1], params[2]));
+//                        if facade.errorMessage
+//                        this.loginState = LoginState.LOGGED_IN;
+                        break;
+                    case "login":
+                        facade.login(new LoginRequest(params[0], params[1]));
+                        break;
+                    case "quit":
+                        facade.quit();
+                        break;
+                    case "help":
+                        System.out.println(help());
+                        break;
+                    default:
+                        System.out.println("Invalid Command");
+                        break;
                 };
             }
             //Main Logged In Loop
@@ -44,11 +55,13 @@ public class Repl {
                 var cmd = (tokens.length > 0) ? tokens[0] : "help";
                 var params = Arrays.copyOfRange(tokens, 1, tokens.length);
                 switch (cmd) {
-                    case "logout" -> s.logout(new LogoutRequest(params[0], params[1], params[2]));
-                    case "createGame" -> s.createGame(params);
-                    case "listGames" -> s.listGames(params);
-                    case "joinGame" -> s.joinGame(params);
-                    case "quit" -> s.quit();
+                    case "logout" -> facade.logout(new LogoutRequest(facade.authToken));
+                    case "createGame" -> facade.createGame(new CreateGameRequest(params[0]));
+                    case "listGames" -> facade.listGames(new ListGamesRequest(facade.authToken));
+
+                    //TODO: cast the joinGame inputs to valid join game request objects
+                    case "joinGame" -> facade.joinGame(new JoinGameRequest(ChessGame.TeamColor.WHITE, 1)); //TODO: Change filler values
+                    case "quit" -> facade.quit();
                     case "help" -> System.out.println(help());
                     default -> System.out.println("Invalid Command");
                 };
@@ -57,7 +70,7 @@ public class Repl {
     }
 
     public String help(){
-        if (this.loginState == LoginState.LOGGED_IN){
+        if (this.loginState == LoginState.LOGGED_OUT){
             return """
         Please type one of the following commands:
     

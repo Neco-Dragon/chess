@@ -9,15 +9,13 @@ import java.net.URI;
 
 public class ServerFacade {
     private final int port;
-    private String authToken;
+    public String authToken;
+    public String errorMessage;
 
     public ServerFacade(int port) {
         this.port = port;
     }
 
-    /**
-     * @return AuthToken, as a string
-     */
     public void register(RegisterRequest registerRequest) throws Exception {
         HttpURLConnection http = makeRequest("/user", "POST", Boolean.TRUE, registerRequest);
         // Output the response body
@@ -26,13 +24,19 @@ public class ServerFacade {
                 try (InputStream respBody = http.getInputStream()) {
                     InputStreamReader inputStreamReader = new InputStreamReader(respBody);
                     RegisterResult registerResult = new Gson().fromJson(inputStreamReader, ResultClasses.RegisterResult.class);
+                    this.authToken = registerResult.authToken();
                 }
+                break;
+            case (400):
+                System.out.println("[400] Error: bad request");
+                break;
+            case (403):
+                System.out.println("[403] Error: already taken");
+                break;
             default:
-                try (InputStream errorStream = http.getErrorStream()){
-                    InputStreamReader errorStreamReader = new InputStreamReader(errorStream);
-                    //TODO: generate error message of
-                }
+                System.out.println(http.getResponseCode() + ") Error: An unknown error occurred. Try again.");
         }
+
     }
     public void login(LoginRequest loginRequest) throws Exception{
         HttpURLConnection http = makeRequest("/session", "POST", Boolean.TRUE, loginRequest);
@@ -63,6 +67,10 @@ public class ServerFacade {
         URI uri = new URI("http://localhost:" + this.port + urlStub); //TODO: Change for each connection
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
         http.setRequestMethod(requestType); //TODO: Change for each connection
+
+        if (authToken != null){
+            http.setRequestProperty("authorization", authToken);
+        }
 
         if (hasBody) {
             // Specify that we are going to write out data
