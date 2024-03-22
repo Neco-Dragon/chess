@@ -14,11 +14,12 @@ import model.GameData;
 public class GameService {
     AuthDAO authDAO;
     GameDAO gameDAO;
-    private int nextGameid = (gameDAO.listGames()).size(); //TODO: Change this to length of the list of games
+    private int nextGameid;
 
     public GameService(AuthDAO authDAO, GameDAO gameDAO) throws DataAccessException {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
+        nextGameid = (gameDAO.listGames()).size();
     }
 
     public void joinGame(String authToken, JoinGameRequest request) throws BadRequestException, DataAccessException, UnauthorizedException, AlreadyTakenException {
