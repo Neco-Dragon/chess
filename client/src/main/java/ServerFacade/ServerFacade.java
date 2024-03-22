@@ -5,8 +5,10 @@ import ResultClasses.InsertGameResult;
 import ResultClasses.ListGamesResult;
 import ResultClasses.LoginResult;
 import ResultClasses.RegisterResult;
+import chess.ChessBoard;
 import com.google.gson.Gson;
 import model.GameData;
+import ui.EscapeSequences;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -117,7 +119,9 @@ public class ServerFacade {
         // Output the response body
         switch (http.getResponseCode()){
             case (200): //Code for a successful request
-                break; //This response has no body in the successful case
+                ChessBoard board = getBoard(joinGameRequest.gameID());
+                printBoard(board);
+                printBoardUpsideDown(board);
             case (400):
                 throw new FacadeException("[400] Error: bad request");
             case (401):
@@ -169,5 +173,47 @@ public class ServerFacade {
             stringBuilder.append(game).append(System.lineSeparator());
         }
         return stringBuilder.toString();
+    }
+
+    public static void printBoard(ChessBoard board){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(" a  b  c  d  e  f  g  h \n");
+        for (int rank = 1; rank <= 8; rank++){
+            stringBuilder.append(" " + rank + " ");
+            for (int j = 1; j <= 8; j++){
+                if ((rank + j) % 2 == 0){
+                    stringBuilder.append(EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY);
+                }
+                else{
+                    stringBuilder.append(EscapeSequences.SET_TEXT_COLOR_WHITE); //Set text color white
+                }
+                stringBuilder.append(board.getPiece(rank, j));
+            }
+            stringBuilder.append(EscapeSequences.RESET_BG_COLOR + "\n");
+            System.out.println(stringBuilder);
+        }
+    }
+    public static void printBoardUpsideDown(ChessBoard board){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(" h  g  f  e  d  c  b  a \n");
+        for (int rank = 8; rank >= 1; rank--){
+            stringBuilder.append(" " + rank + " ");
+            for (int j = 8; j >= 1; j--){
+                if ((rank + j) % 2 == 0){
+                    stringBuilder.append(EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY);
+                }
+                else{
+                    stringBuilder.append(EscapeSequences.SET_TEXT_COLOR_WHITE); //Set text color white
+                }
+                stringBuilder.append(board.getPiece(rank, j));
+            }
+            stringBuilder.append(EscapeSequences.RESET_BG_COLOR + "\n");
+            System.out.println(stringBuilder);
+        }
+    }
+    public static ChessBoard getBoard(int gameID){
+        ChessBoard board = new ChessBoard();
+        board.resetBoard();
+        return board;
     }
 }

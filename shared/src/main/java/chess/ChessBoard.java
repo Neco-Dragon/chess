@@ -2,6 +2,7 @@ package chess;
 
 import java.util.Arrays;
 
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -145,6 +146,9 @@ public class ChessBoard {
             copy[i] = Arrays.copyOf(board[i], board[i].length);
         }
         return copy;
+    }
+    public ChessPiece getPiece(int rank, int file){
+        return board[rank - 1][file - 1];
     }
 
 }
