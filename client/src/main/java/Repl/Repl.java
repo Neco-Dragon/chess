@@ -1,8 +1,12 @@
+package Repl;
+
 import RequestClasses.*;
+import ServerFacade.ServerFacade;
 import chess.ChessGame;
 
 import java.util.Arrays;
 import java.util.Scanner;
+import ServerFacade.*;
 
 public class Repl {
 
@@ -99,10 +103,20 @@ public class Repl {
                         break;
                     case ("joinGame"):
                         try {
+                            if (params.length == 0){
+                                System.out.println("Please enter at least a gameID");
+                                break;
+                            }
                             int id = Integer.parseInt(params[0]);
+                            if (params.length == 1){ //Join as observer
+                                facade.joinGame(new JoinGameRequest(null, id));
+                                System.out.println("Joined as an observer successfully.");
+                                break;
+                            }
                             ChessGame.TeamColor teamColor = getTeamColor(params[1]);
                             facade.joinGame(new JoinGameRequest(teamColor, id));
                             System.out.println("Game Join successful.");
+                            break;
                         }
                         catch (FacadeException e){
                             System.out.println(e.getMessage());
@@ -161,8 +175,9 @@ public class Repl {
             - Creates a new game with the given name.
         listGames
             - Displays a list of available games.
-        joinGame <gameID> <WHITE/BLACK>
+        joinGame <gameID> <WHITE/BLACK>[optional]
             - Joins the game with the specified ID.
+            - if just a gameID is supplied, joins game as observer.
         quit
             - Exits the application.
         help

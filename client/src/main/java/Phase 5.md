@@ -16,11 +16,11 @@ We will have to change the colors of what we're outputting to the terminal
 
 Write UNIT tests for your server facade first 
 
-Class ServerFacade will be part of the Client
+Class ServerFacade.ServerFacade will be part of the Client
 
 Look at GET and PostExample.java for Serverfacade
 
-***Make HEAVY use of ServerFacade in Pet Shop*** And then write the tests
+***Make HEAVY use of ServerFacade.ServerFacade in Pet Shop*** And then write the tests
 
 //Later on, look up terminal control codes
 

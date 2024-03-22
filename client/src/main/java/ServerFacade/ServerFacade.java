@@ -1,3 +1,5 @@
+package ServerFacade;
+
 import RequestClasses.*;
 import ResultClasses.InsertGameResult;
 import ResultClasses.ListGamesResult;

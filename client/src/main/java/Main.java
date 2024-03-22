@@ -1,6 +1,6 @@
-import chess.*;
+import Repl.Repl;
 import server.Server;
-import ui.EscapeSequences;
+
 public class Main {
     public static void main(String[] args) throws Exception {
         System.out.println("♕ 240 Chess Client: ");
