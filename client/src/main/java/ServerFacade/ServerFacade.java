@@ -91,7 +91,7 @@ public class ServerFacade {
             case (401):
                 throw new FacadeException("[401] Error: unauthorized");
             default:
-                throw new FacadeException("[" + http.getResponseCode() + "] Error: An unknown error occurred. Try again.");
+                throw new FacadeException("[" + http.getResponseCode() + "] " + http.getResponseMessage() + ". Try again.");
         }
     }
     public void listGames(ListGamesRequest listGamesRequest) throws Exception{
