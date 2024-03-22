@@ -49,4 +49,10 @@ public class MemoryGameDAO implements GameDAO{
         }
         fakeGameDatabase.put(gameID, myNewGame);
     }
+
+    @Override
+    public int getSize() {
+        return fakeGameDatabase.size();
+    }
+
 }

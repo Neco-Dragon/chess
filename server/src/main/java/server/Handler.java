@@ -20,7 +20,7 @@ public class Handler {
     private final GameService gameService;
     private final Gson gson = new Gson();
 
-    public Handler(UserDAO userDAO, AuthDAO authDAO, GameDAO gameDAO) {
+    public Handler(UserDAO userDAO, AuthDAO authDAO, GameDAO gameDAO) throws DataAccessException {
         this.userService = new UserService(authDAO, userDAO);
         this.gameService = new GameService(authDAO, gameDAO);
         this.clearService = new ClearService(authDAO, userDAO, gameDAO);

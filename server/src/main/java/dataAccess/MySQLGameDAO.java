@@ -129,6 +129,22 @@ public class MySQLGameDAO implements GameDAO {
             throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()));
         }
     }
+
+    @Override
+    public int getSize() throws DataAccessException {
+        String countQuery = "SELECT COUNT(*) FROM games";
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement ps = conn.prepareStatement(countQuery);
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException | DataAccessException ex) {
+            throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()));
+        }
+        return 0; // Return 0 if there's an error or no records found
+    }
+
     private GameData readGameData(ResultSet rs) throws SQLException {
         var gameID = rs.getInt("gameID");
         var whiteUsername = rs.getString("whiteUsername");

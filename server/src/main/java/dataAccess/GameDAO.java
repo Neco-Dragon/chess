@@ -43,4 +43,5 @@ public interface GameDAO {
      */
 
     void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws BadRequestException, DataAccessException, AlreadyTakenException;
+    public int getSize() throws DataAccessException;
 }

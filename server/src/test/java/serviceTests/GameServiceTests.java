@@ -28,6 +28,10 @@ public class GameServiceTests {
     MemoryAuthDAO authDAO = new MemoryAuthDAO();
     ClearService clearService = new ClearService(authDAO, userDAO, gameDAO);
     GameService gameService = new GameService(authDAO, gameDAO);
+
+    public GameServiceTests() throws DataAccessException {
+    }
+
     @BeforeEach
     void clear() throws BadRequestException, DataAccessException {
         clearService.clear();

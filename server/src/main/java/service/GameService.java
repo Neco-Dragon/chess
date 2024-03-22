@@ -14,9 +14,9 @@ import model.GameData;
 public class GameService {
     AuthDAO authDAO;
     GameDAO gameDAO;
-    private int nextGameid = 0;
+    private int nextGameid = (gameDAO.listGames()).size(); //TODO: Change this to length of the list of games
 
-    public GameService(AuthDAO authDAO, GameDAO gameDAO) {
+    public GameService(AuthDAO authDAO, GameDAO gameDAO) throws DataAccessException {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
     }
