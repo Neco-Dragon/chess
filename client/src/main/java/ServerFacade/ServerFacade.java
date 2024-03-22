@@ -126,6 +126,7 @@ public class ServerFacade {
                 ChessBoard board = getBoard(joinGameRequest.gameID());
                 printBoard(board);
                 printBoardUpsideDown(board);
+                break;
             case (400):
                 throw new FacadeException("[400] Error: bad request");
             case (401):
