@@ -1,12 +1,16 @@
 import RequestClasses.*;
+import ResultClasses.InsertGameResult;
+import ResultClasses.ListGamesResult;
 import ResultClasses.LoginResult;
 import ResultClasses.RegisterResult;
 import com.google.gson.Gson;
+import model.GameData;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
+import java.util.ArrayList;
 
 public class ServerFacade {
     private final int port;
@@ -33,7 +37,7 @@ public class ServerFacade {
             case (403):
                 throw new FacadeException("[403] Error: already taken");
             default:
-                System.out.println(http.getResponseCode() + ") Error: An unknown error occurred. Try again.");
+                throw new FacadeException("[" + http.getResponseCode() + "] Error: An unknown error occurred. Try again.");
         }
 
     }
@@ -51,7 +55,7 @@ public class ServerFacade {
             case (401):
                 throw new FacadeException("[401] Error: unauthorized");
             default:
-                System.out.println(http.getResponseCode() + ") Error: An unknown error occurred. Try again.");
+                throw new FacadeException("[" + http.getResponseCode() + "] Error: An unknown error occurred. Try again.");
         }
     }
     public void logout(LogoutRequest logoutRequest) throws Exception{
@@ -66,20 +70,61 @@ public class ServerFacade {
             case (401):
                 throw new FacadeException("[401] Error: unauthorized");
             default:
-                System.out.println(http.getResponseCode() + ") Error: An unknown error occurred. Try again.");
+                throw new FacadeException("[" + http.getResponseCode() + "] Error: An unknown error occurred. Try again.");
         }
     }
     public void createGame(CreateGameRequest createGameRequest) throws Exception{
         HttpURLConnection http = makeRequest("/game", "POST", Boolean.TRUE, createGameRequest);
-
+        // Output the response body
+        switch (http.getResponseCode()){
+            case (200): //Code for a successful request
+                try (InputStream respBody = http.getInputStream()) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+                    InsertGameResult insertGameResult = new Gson().fromJson(inputStreamReader, ResultClasses.InsertGameResult.class);
+                    System.out.println(insertGameResult.gameID());
+                }
+                break;
+            case (400):
+                throw new FacadeException("[400] Error: bad request");
+            case (401):
+                throw new FacadeException("[401] Error: unauthorized");
+            default:
+                throw new FacadeException("[" + http.getResponseCode() + "] Error: An unknown error occurred. Try again.");
+        }
     }
     public void listGames(ListGamesRequest listGamesRequest) throws Exception{
         HttpURLConnection http = makeRequest("/game", "GET", Boolean.FALSE, listGamesRequest);
-
+        // Output the response body
+        switch (http.getResponseCode()){
+            case (200): //Code for a successful request
+                try (InputStream respBody = http.getInputStream()) {
+                    InputStreamReader inputStreamReader = new InputStreamReader(respBody);
+                    ListGamesResult listGamesResult = new Gson().fromJson(inputStreamReader, ResultClasses.ListGamesResult.class);
+                    System.out.println(this.printGames(listGamesResult.games()));
+                }
+                break;
+            case (401):
+                throw new FacadeException("[401] Error: unauthorized");
+            default:
+                throw new FacadeException("[" + http.getResponseCode() + "] Error: An unknown error occurred. Try again.");
+        }
     }
+
     public void joinGame(JoinGameRequest joinGameRequest) throws Exception{
         HttpURLConnection http = makeRequest("/game", "PUT", Boolean.FALSE, joinGameRequest);
-
+        // Output the response body
+        switch (http.getResponseCode()){
+            case (200): //Code for a successful request
+                break; //This request has no body in the successful case
+            case (400):
+                throw new FacadeException("[400] Error: bad request");
+            case (401):
+                throw new FacadeException("[401] Error: unauthorized");
+            case (403):
+                throw new FacadeException("[403] Error: already taken");
+            default:
+                throw new FacadeException("[" + http.getResponseCode() + "] Error: An unknown error occurred. Try again.");
+        }
     }
     public static void quit() throws Exception{
         return;
@@ -115,4 +160,8 @@ public class ServerFacade {
         return http;
     }
 
+
+    private String printGames(ArrayList<GameData> games) {
+        return "";
+    }
 }
