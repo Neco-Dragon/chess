@@ -71,6 +71,7 @@ public class Repl {
                             facade.logout(new LogoutRequest(facade.authToken));
                             loginState = LoginState.LOGGED_OUT;
                             System.out.println("Logout successful. You are now logged out.");
+                            break;
                         }
                         catch (FacadeException e){
                             System.out.println(e.getMessage());
@@ -79,6 +80,7 @@ public class Repl {
                         try {
                             facade.createGame(new CreateGameRequest(params[0]));
                             System.out.println("Game creation successful. Type listGames to see your game. Type joinGame to join.");
+                            break;
                         }
                         catch (FacadeException e){
                             System.out.println(e.getMessage());
@@ -86,6 +88,7 @@ public class Repl {
                     case ("listGames"):
                         try {
                             facade.listGames(new ListGamesRequest(facade.authToken));
+                            break;
                         }
                         catch (FacadeException e){
                             System.out.println(e.getMessage());
@@ -96,6 +99,7 @@ public class Repl {
                             int id = Integer.parseInt(params[1]);
                             facade.joinGame(new JoinGameRequest(teamColor, id));
                             System.out.println("Game Join successful.");
+                            break;
                         }
                         catch (FacadeException e){
                             System.out.println(e.getMessage());
