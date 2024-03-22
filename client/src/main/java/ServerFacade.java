@@ -127,7 +127,7 @@ public class ServerFacade {
         }
     }
     public static void quit() throws Exception{
-        return;
+        System.out.println("Quitting chess...");
     }
 
     private HttpURLConnection makeRequest(String urlStub, String requestType, Boolean hasBody, Object bodyData) throws Exception {

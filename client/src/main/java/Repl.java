@@ -13,13 +13,14 @@ public class Repl {
     private ServerFacade facade;
 
     private LoginState loginState = LoginState.LOGGED_OUT;
+    private Boolean runProgram = Boolean.TRUE;
 
     public Repl(String serverUrl) {
         facade = new ServerFacade(8080); //TODO: is this the right port?
     }
 
     public void run() throws Exception {
-        while (true) {
+        while (runProgram) {
             Scanner scanner = new Scanner(System.in);
             System.out.println("Welcome to Chess 240!");
             System.out.println(help());
@@ -52,6 +53,8 @@ public class Repl {
                         break;
                     case "quit":
                         facade.quit();
+                        loginState = LoginState.LOGGED_OUT;
+                        runProgram = Boolean.FALSE;
                         break;
                     case "help":
                         System.out.println(help());
@@ -107,8 +110,12 @@ public class Repl {
                         break;
                     case ("quit"):
                         facade.quit();
+                        loginState = LoginState.LOGGED_OUT;
+                        runProgram = Boolean.FALSE;
+                        break;
                     case ("help"):
                         System.out.println(help());
+                        break;
                     default: System.out.println("Invalid Command");
                 };
             }
@@ -163,6 +170,7 @@ public class Repl {
     """;
         }
     }
+
 
 
 }
