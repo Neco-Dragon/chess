@@ -6,6 +6,7 @@ import ResultClasses.ListGamesResult;
 import ResultClasses.LoginResult;
 import ResultClasses.RegisterResult;
 import chess.ChessBoard;
+import chess.ChessPiece;
 import com.google.gson.Gson;
 import model.GameData;
 import ui.EscapeSequences;
@@ -86,6 +87,9 @@ public class ServerFacade {
                     InputStreamReader inputStreamReader = new InputStreamReader(respBody);
                     InsertGameResult insertGameResult = new Gson().fromJson(inputStreamReader, ResultClasses.InsertGameResult.class);
                     System.out.println(insertGameResult.gameID());
+                    ChessBoard board = getBoard(0); //TODO: this is not the board created, but it should be identical to the starting board
+                    printBoard(board);
+                    printBoardUpsideDown(board);
                 }
                 break;
             case (400):
@@ -177,40 +181,54 @@ public class ServerFacade {
 
     public static void printBoard(ChessBoard board){
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(" a  b  c  d  e  f  g  h \n");
+        stringBuilder.append("    a  b  c  d  e  f  g  h \n");
         for (int rank = 1; rank <= 8; rank++){
-            stringBuilder.append(" " + rank + " ");
+            stringBuilder.append(" ").append(rank).append(" ");
             for (int j = 1; j <= 8; j++){
-                if ((rank + j) % 2 == 0){
-                    stringBuilder.append(EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY);
+                if ((rank + j) % 2 == 1){
+                    stringBuilder.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
                 }
                 else{
-                    stringBuilder.append(EscapeSequences.SET_TEXT_COLOR_WHITE); //Set text color white
+                    stringBuilder.append(EscapeSequences.SET_BG_COLOR_WHITE);
                 }
-                stringBuilder.append(board.getPiece(rank, j));
+                ChessPiece p = (board.getPiece(rank, j));
+                if (p == null){
+                    stringBuilder.append("   ");
+                }
+                else{
+                    stringBuilder.append(" ").append(p).append(" ");
+                }
             }
             stringBuilder.append(EscapeSequences.RESET_BG_COLOR + "\n");
-            System.out.println(stringBuilder);
         }
+        System.out.println(stringBuilder);
     }
+
     public static void printBoardUpsideDown(ChessBoard board){
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(" h  g  f  e  d  c  b  a \n");
+        stringBuilder.append("    h  g  f  e  d  c  b  a \n");
         for (int rank = 8; rank >= 1; rank--){
-            stringBuilder.append(" " + rank + " ");
+            stringBuilder.append(" ").append(rank).append(" ");
             for (int j = 8; j >= 1; j--){
-                if ((rank + j) % 2 == 0){
-                    stringBuilder.append(EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY);
+                if ((rank + j) % 2 == 1){
+                    stringBuilder.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
                 }
                 else{
-                    stringBuilder.append(EscapeSequences.SET_TEXT_COLOR_WHITE); //Set text color white
+                    stringBuilder.append(EscapeSequences.SET_BG_COLOR_WHITE);
                 }
-                stringBuilder.append(board.getPiece(rank, j));
+                ChessPiece p = (board.getPiece(rank, j));
+                if (p == null){
+                    stringBuilder.append("   ");
+                }
+                else{
+                    stringBuilder.append(" ").append(p).append(" ");
+                }
             }
             stringBuilder.append(EscapeSequences.RESET_BG_COLOR + "\n");
-            System.out.println(stringBuilder);
         }
+        System.out.println(stringBuilder);
     }
+
     public static ChessBoard getBoard(int gameID){
         ChessBoard board = new ChessBoard();
         board.resetBoard();
