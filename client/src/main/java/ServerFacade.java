@@ -162,6 +162,10 @@ public class ServerFacade {
 
 
     private String printGames(ArrayList<GameData> games) {
-        return "";
+        StringBuilder stringBuilder = new StringBuilder();
+        for (GameData game : games) {
+            stringBuilder.append(game).append(System.lineSeparator());
+        }
+        return stringBuilder.toString();
     }
 }

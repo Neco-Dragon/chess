@@ -1,6 +1,5 @@
 import RequestClasses.*;
 import chess.ChessGame;
-import org.eclipse.jetty.server.Authentication;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -87,7 +86,6 @@ public class Repl {
                     case ("listGames"):
                         try {
                             facade.listGames(new ListGamesRequest(facade.authToken));
-                            //TODO: Print the fetching games
                         }
                         catch (FacadeException e){
                             System.out.println(e.getMessage());
