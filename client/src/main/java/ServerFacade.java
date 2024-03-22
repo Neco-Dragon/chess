@@ -111,11 +111,11 @@ public class ServerFacade {
     }
 
     public void joinGame(JoinGameRequest joinGameRequest) throws Exception{
-        HttpURLConnection http = makeRequest("/game", "PUT", Boolean.FALSE, joinGameRequest);
+        HttpURLConnection http = makeRequest("/game", "PUT", Boolean.TRUE, joinGameRequest);
         // Output the response body
         switch (http.getResponseCode()){
             case (200): //Code for a successful request
-                break; //This request has no body in the successful case
+                break; //This response has no body in the successful case
             case (400):
                 throw new FacadeException("[400] Error: bad request");
             case (401):

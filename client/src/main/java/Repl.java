@@ -96,8 +96,8 @@ public class Repl {
                         break;
                     case ("joinGame"):
                         try {
-                            ChessGame.TeamColor teamColor = getTeamColor(params[0]);
-                            int id = Integer.parseInt(params[1]);
+                            int id = Integer.parseInt(params[0]);
+                            ChessGame.TeamColor teamColor = getTeamColor(params[1]);
                             facade.joinGame(new JoinGameRequest(teamColor, id));
                             System.out.println("Game Join successful.");
                         }
@@ -154,7 +154,7 @@ public class Repl {
             - Creates a new game with the given name.
         listGames
             - Displays a list of available games.
-        joinGame <gameID>
+        joinGame <gameID> <WHITE/BLACK>
             - Joins the game with the specified ID.
         quit
             - Exits the application.
