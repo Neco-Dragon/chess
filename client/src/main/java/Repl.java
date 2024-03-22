@@ -43,6 +43,7 @@ public class Repl {
                     case "login":
                         try{
                             facade.login(new LoginRequest(params[0], params[1]));
+                            loginState = LoginState.LOGGED_IN;
                             System.out.println("Login successful. You are now logged in.");
                         }
                         catch (FacadeException e){
