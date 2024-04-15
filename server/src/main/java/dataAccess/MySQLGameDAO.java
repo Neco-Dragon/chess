@@ -150,8 +150,8 @@ public class MySQLGameDAO implements GameDAO {
         var whiteUsername = rs.getString("whiteUsername");
         var blackUsername = rs.getString("blackUsername");
         var gameName = rs.getString("gameName");
-        var JsonString = rs.getString("game");
-        var game = new Gson().fromJson(JsonString, ChessGame.class);
+        var jsonString = rs.getString("game");
+        var game = new Gson().fromJson(jsonString, ChessGame.class);
         return new GameData(gameID, whiteUsername, blackUsername, gameName, game);
     }
 }

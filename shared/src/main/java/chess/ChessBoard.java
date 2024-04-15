@@ -112,19 +112,19 @@ public class ChessBoard {
 
     @Override
     public String toString() {
-        StringBuilder OUT = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
         for (int i = board.length - 1; i >= 0; i--) {
             ChessPiece[] chessPieces = board[i];
             for (ChessPiece chessPiece : chessPieces) {
                 if (chessPiece == null) {
-                    OUT.append("| |");
+                    stringBuilder.append("| |");
                 } else {
-                    OUT.append(String.format("|%s|", chessPiece));
+                    stringBuilder.append(String.format("|%s|", chessPiece));
                 }
             }
-            OUT.append("\n");
+            stringBuilder.append("\n");
         }
-        return OUT.toString();
+        return stringBuilder.toString();
     }
     /** @return Whether a square is Illegal to move on. Takes into account both board size and friendly pieces, but not check*/
     public boolean squareBlocked(ChessPosition position, ChessPiece pieceWantingToMove){
@@ -138,14 +138,6 @@ public class ChessBoard {
     public boolean enemyOnSquare(ChessPosition position, ChessPiece pieceWantingToMove){
         if (this.getPiece(position) == null) return false; //if there is no piece
         return !this.getPiece(position).sameTeam(pieceWantingToMove);
-    }
-
-    public ChessPiece[][] copy() {
-        ChessPiece[][] copy = new ChessPiece[board.length][];
-        for (int i = 0; i < board.length; i++) {
-            copy[i] = Arrays.copyOf(board[i], board[i].length);
-        }
-        return copy;
     }
     public ChessPiece getPiece(int rank, int file){
         return board[rank - 1][file - 1];

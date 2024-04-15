@@ -84,13 +84,10 @@ public class DatabaseManager {
     }
 
     static void executeQuery(){
-        return;
     }
     static void prepareStatement(){
-        return;
     }
     static void openConnection(){
-        return;
     }
 
 }

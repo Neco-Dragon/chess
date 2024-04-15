@@ -33,6 +33,6 @@ public interface AuthDAO {
      */
     void deleteAuth(String authToken) throws DataAccessException, BadRequestException, UnauthorizedException;
     String getUsername(String authToken) throws DataAccessException, BadRequestException, UnauthorizedException;
-    public String generateAuthToken(String username);
+    String generateAuthToken(String username);
 
 }

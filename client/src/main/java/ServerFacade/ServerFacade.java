@@ -69,7 +69,7 @@ public class ServerFacade {
         switch (http.getResponseCode()){
             case (200): //Code for a successful request
                 try (InputStream respBody = http.getInputStream()) {
-                    authToken = null; //TODO: depending on how the tests work, they might expect the authToken to still be there
+                    authToken = null;
                 }
                 break;
             case (401):
@@ -87,7 +87,7 @@ public class ServerFacade {
                     InputStreamReader inputStreamReader = new InputStreamReader(respBody);
                     InsertGameResult insertGameResult = new Gson().fromJson(inputStreamReader, ResultClasses.InsertGameResult.class);
                     System.out.println(insertGameResult.gameID());
-                    ChessBoard board = getBoard(0); //TODO: this is not the board created, but it should be identical to the starting board
+                    ChessBoard board = getBoard(0); //Note: this is not the board created, but it should be identical to the starting board
                     printBoard(board);
                     printBoardUpsideDown(board);
                 }
@@ -143,9 +143,9 @@ public class ServerFacade {
 
     private HttpURLConnection makeRequest(String urlStub, String requestType, Boolean hasBody, Object bodyData) throws Exception {
         // Specify the desired endpoint
-        URI uri = new URI("http://localhost:" + this.port + urlStub); //TODO: Change for each connection
+        URI uri = new URI("http://localhost:" + this.port + urlStub); //TODOChange for each connection
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
-        http.setRequestMethod(requestType); //TODO: Change for each connection
+        http.setRequestMethod(requestType); //TODOChange for each connection
 
         if (authToken != null){
             http.setRequestProperty("authorization", authToken);
@@ -155,7 +155,7 @@ public class ServerFacade {
             // Specify that we are going to write out data
             http.setDoOutput(true);
 
-            // Write out a header` //TODO: Don't change this line
+            // Write out a header`
             http.addRequestProperty("Content-Type", "application/json");
 
             // Write out the body
@@ -180,52 +180,34 @@ public class ServerFacade {
         return stringBuilder.toString();
     }
 
-    public static void printBoard(ChessBoard board){
+    public static void printBoard(ChessBoard board) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("    a  b  c  d  e  f  g  h \n");
-        for (int rank = 1; rank <= 8; rank++){
+        for (int rank = 1; rank <= 8; rank++) {
             stringBuilder.append(" ").append(rank).append(" ");
-            for (int j = 1; j <= 8; j++){
-                if ((rank + j) % 2 == 1){
+            for (int col = 1; col <= 8; col++) {
+                if ((rank + col) % 2 == 1) {
                     stringBuilder.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
-                }
-                else{
-                    stringBuilder.append(EscapeSequences.SET_BG_COLOR_WHITE);
-                }
-                ChessPiece p = (board.getPiece(rank, j));
-                if (p == null){
-                    stringBuilder.append("   ");
-                }
-                else{
-                    stringBuilder.append(" ").append(p).append(" ");
-                }
-            }
-            stringBuilder.append(EscapeSequences.RESET_BG_COLOR + "\n");
+                } else {stringBuilder.append(EscapeSequences.SET_BG_COLOR_WHITE);}
+                ChessPiece p = board.getPiece(rank, col);
+                stringBuilder.append(p == null ? "   " : " ").append(p).append(" ");}
+            stringBuilder.append(EscapeSequences.RESET_BG_COLOR).append("\n");
         }
         System.out.println(stringBuilder);
     }
 
-    public static void printBoardUpsideDown(ChessBoard board){
+    public static void printBoardUpsideDown(ChessBoard board) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("    h  g  f  e  d  c  b  a \n");
-        for (int rank = 8; rank >= 1; rank--){
+        for (int rank = 8; rank >= 1; rank--) {
             stringBuilder.append(" ").append(rank).append(" ");
-            for (int j = 8; j >= 1; j--){
-                if ((rank + j) % 2 == 1){
+            for (int col = 8; col >= 1; col--) {
+                if ((rank + col) % 2 == 1) {
                     stringBuilder.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
-                }
-                else{
-                    stringBuilder.append(EscapeSequences.SET_BG_COLOR_WHITE);
-                }
-                ChessPiece p = (board.getPiece(rank, j));
-                if (p == null){
-                    stringBuilder.append("   ");
-                }
-                else{
-                    stringBuilder.append(" ").append(p).append(" ");
-                }
-            }
-            stringBuilder.append(EscapeSequences.RESET_BG_COLOR + "\n");
+                } else {stringBuilder.append(EscapeSequences.SET_BG_COLOR_WHITE);}
+                ChessPiece p = board.getPiece(rank, col);
+                stringBuilder.append(p == null ? "   " : " ").append(p).append(" ");}
+            stringBuilder.append(EscapeSequences.RESET_BG_COLOR).append("\n");
         }
         System.out.println(stringBuilder);
     }
@@ -235,4 +217,5 @@ public class ServerFacade {
         board.resetBoard();
         return board;
     }
+
 }

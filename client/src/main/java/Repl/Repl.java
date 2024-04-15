@@ -14,127 +14,31 @@ public class Repl {
         LOGGED_IN,
         LOGGED_OUT
     }
-    private ServerFacade facade;
-    //TODO: Add a Websocket Facade
+    private final ServerFacade facade;
+    //TODOAdd a Websocket Facade
 
     private LoginState loginState = LoginState.LOGGED_OUT;
     private Boolean runProgram = Boolean.TRUE;
+    private final Scanner scanner = new Scanner(System.in);
 
     public Repl(String serverUrl) {
-        facade = new ServerFacade(8080); //TODO: is this the right port?
+        facade = new ServerFacade(8080);
     }
 
     public void run() throws Exception {
         while (runProgram) {
-            Scanner scanner = new Scanner(System.in);
             System.out.println("Welcome to Chess 240!");
             System.out.println(help());
 
             //Main Logged Out Loop
             while (loginState == LoginState.LOGGED_OUT){
-                String[] tokens = scanner.nextLine().split(" ");
-                var cmd = (tokens.length > 0) ? tokens[0] : "help";
-                var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-                switch (cmd) {
-                    case "register":
-                        try{
-                            facade.register(new RegisterRequest(params[0], params[1], params[2]));
-                            loginState = LoginState.LOGGED_IN;
-                            System.out.println("Registration successful. You are now logged in.");
-                        }
-                        catch (FacadeException e){
-                            System.out.println(e.getMessage());
-                        }
-                        break;
-                    case "login":
-                        try{
-                            facade.login(new LoginRequest(params[0], params[1]));
-                            loginState = LoginState.LOGGED_IN;
-                            System.out.println("Login successful. You are now logged in.");
-                        }
-                        catch (FacadeException e){
-                            System.out.println(e.getMessage());
-                        }
-                        break;
-                    case "quit":
-                        facade.quit();
-                        loginState = LoginState.LOGGED_OUT;
-                        runProgram = Boolean.FALSE;
-                        break;
-                    case "help":
-                        System.out.println(help());
-                        break;
-                    default:
-                        System.out.println("Invalid Command");
-                        break;
-                };
+                loggedOutLoop();
             }
             //Main Logged In Loop
             while (loginState == LoginState.LOGGED_IN){
-                var tokens = scanner.nextLine().split(" ");
-                var cmd = (tokens.length > 0) ? tokens[0] : "help";
-                var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-                switch (cmd) {
-                    case ("logout"):
-                        try{
-                            facade.logout(new LogoutRequest(facade.authToken));
-                            loginState = LoginState.LOGGED_OUT;
-                            System.out.println("Logout successful. You are now logged out.");
-                        }
-                        catch (FacadeException e){
-                            System.out.println(e.getMessage());
-                        }
-                        break;
-                    case ("createGame"):
-                        try {
-                            facade.createGame(new CreateGameRequest(params[0]));
-                            System.out.println("Game creation successful. Type listGames to see your game. Type joinGame to join.");
-                        }
-                        catch (FacadeException e){
-                            System.out.println(e.getMessage());
-                        }
-                        break;
-                    case ("listGames"):
-                        try {
-                            facade.listGames(new ListGamesRequest(facade.authToken));
-                        }
-                        catch (FacadeException e){
-                            System.out.println(e.getMessage());
-                        }
-                        break;
-                    case ("joinGame"):
-                        try {
-                            if (params.length == 0){
-                                System.out.println("Please enter at least a gameID");
-                                break;
-                            }
-                            int id = Integer.parseInt(params[0]);
-                            if (params.length == 1){ //Join as observer
-                                facade.joinGame(new JoinGameRequest(null, id));
-                                System.out.println("Joined as an observer successfully.");
-                                break;
-                            }
-                            ChessGame.TeamColor teamColor = getTeamColor(params[1]);
-                            facade.joinGame(new JoinGameRequest(teamColor, id));
-                            System.out.println("Game Join successful.");
-                            break;
-                        }
-                        catch (FacadeException e){
-                            System.out.println(e.getMessage());
-                        }
-                        break;
-                    case ("quit"):
-                        facade.quit();
-                        loginState = LoginState.LOGGED_OUT;
-                        runProgram = Boolean.FALSE;
-                        break;
-                    case ("help"):
-                        System.out.println(help());
-                        break;
-                    default: System.out.println("Invalid Command");
-                };
+                loggedInLoop();
             }
-            //TODO: Go to a gameplay  UI loop wihch will call
+            //TODOGo to a gameplay UI loop which will call
         }
     }
 
@@ -188,6 +92,108 @@ public class Repl {
         }
     }
 
+    private void loggedInLoop() throws Exception {
+        var tokens = scanner.nextLine().split(" ");
+        var cmd = (tokens.length > 0) ? tokens[0] : "help";
+        var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+        switch (cmd) {
+            case ("logout"):
+                try{
+                    facade.logout(new LogoutRequest(facade.authToken));
+                    loginState = LoginState.LOGGED_OUT;
+                    System.out.println("Logout successful. You are now logged out.");
+                }
+                catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
+                break;
+            case ("createGame"):
+                try {
+                    facade.createGame(new CreateGameRequest(params[0]));
+                    System.out.println("Game creation successful. Type listGames to see your game. Type joinGame to join.");
+                }
+                catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
+                break;
+            case ("listGames"):
+                try {
+                    facade.listGames(new ListGamesRequest(facade.authToken));
+                }
+                catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
+                break;
+            case ("joinGame"):
+                try {
+                    if (params.length == 0){
+                        System.out.println("Please enter at least a gameID");
+                        break;
+                    }
+                    int id = Integer.parseInt(params[0]);
+                    if (params.length == 1){ //Join as observer
+                        facade.joinGame(new JoinGameRequest(null, id));
+                        System.out.println("Joined as an observer successfully.");
+                        break;
+                    }
+                    ChessGame.TeamColor teamColor = getTeamColor(params[1]);
+                    facade.joinGame(new JoinGameRequest(teamColor, id));
+                    System.out.println("Game Join successful.");
+                    break;
+                }
+                catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
+                break;
+            case ("quit"):
+                ServerFacade.quit();
+                loginState = LoginState.LOGGED_OUT;
+                runProgram = Boolean.FALSE;
+                break;
+            case ("help"):
+                System.out.println(help());
+                break;
+            default: System.out.println("Invalid Command");
+        }
+    }
 
+    private void loggedOutLoop() throws Exception {
+        String[] tokens = scanner.nextLine().split(" ");
+        var cmd = (tokens.length > 0) ? tokens[0] : "help";
+        var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+        switch (cmd) {
+            case "register":
+                try{
+                    facade.register(new RegisterRequest(params[0], params[1], params[2]));
+                    loginState = LoginState.LOGGED_IN;
+                    System.out.println("Registration successful. You are now logged in.");
+                }
+                catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
+                break;
+            case "login":
+                try{
+                    facade.login(new LoginRequest(params[0], params[1]));
+                    loginState = LoginState.LOGGED_IN;
+                    System.out.println("Login successful. You are now logged in.");
+                }
+                catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
+                break;
+            case "quit":
+                ServerFacade.quit();
+                loginState = LoginState.LOGGED_OUT;
+                runProgram = Boolean.FALSE;
+                break;
+            case "help":
+                System.out.println(help());
+                break;
+            default:
+                System.out.println("Invalid Command");
+                break;
+        }
+    }
 
 }
