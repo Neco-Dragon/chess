@@ -2,6 +2,8 @@ package server;
 
 import Exceptions.*;
 import dataAccess.*;
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import spark.*;
 
 
@@ -28,6 +30,7 @@ public class Server {
             throw new RuntimeException(e.getMessage());
         }
 
+        Spark.webSocket("/connect", WebSocketHandler.class);
 
         //Endpoints (these point to handlers)
         //CLEAR

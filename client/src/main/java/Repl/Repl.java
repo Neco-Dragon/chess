@@ -15,6 +15,7 @@ public class Repl {
         LOGGED_OUT
     }
     private ServerFacade facade;
+    //TODO: Add a Websocket Facade
 
     private LoginState loginState = LoginState.LOGGED_OUT;
     private Boolean runProgram = Boolean.TRUE;
@@ -133,6 +134,7 @@ public class Repl {
                     default: System.out.println("Invalid Command");
                 };
             }
+            //TODO: Go to a gameplay  UI loop wihch will call
         }
     }
 
