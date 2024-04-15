@@ -62,7 +62,7 @@ public class WebSocketHandler {
             //
             //Server sends a LOAD_GAME message back to the root client.
             //Server sends a Notification message to all other clients in that game informing them what color the root client is joining as.
-            broadcast(session, message); //Notification Message
+//            broadcast(session, message); //Notification Message
             send(session, message); //LoadGame Message
 
         } catch (Exception e){
