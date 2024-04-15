@@ -7,19 +7,27 @@ import spark.*;
 
 public class Server {
 
-    public int run(int desiredPort) throws DataAccessException {
+    public int run(int desiredPort){
         Spark.port(desiredPort);
         Spark.staticFiles.location("web");
+        UserDAO userDAO;
+        AuthDAO authDAO;
+        GameDAO gameDAO;
+        Handler myHandler;
+        try {
+            userDAO = new MySQLUserDAO();
+            authDAO = new MySQLAuthDAO();
+            gameDAO = new MySQLGameDAO();
 
-        //TODO: Switch from SQL to MEmory for testing
-        UserDAO userDAO = new MySQLUserDAO();
-        AuthDAO authDAO = new MySQLAuthDAO();
-        GameDAO gameDAO = new MySQLGameDAO();
+            //Exception Handler
+            Spark.exception(ServerException.class, this::exceptionHandler);
 
-        //Exception Handler
-        Spark.exception(ServerException.class, this::exceptionHandler);
+            myHandler = new Handler(userDAO, authDAO, gameDAO);
+        }
+        catch (Exception e){
+            throw new RuntimeException(e.getMessage());
+        }
 
-        Handler myHandler = new Handler(userDAO, authDAO, gameDAO);
 
         //Endpoints (these point to handlers)
         //CLEAR
