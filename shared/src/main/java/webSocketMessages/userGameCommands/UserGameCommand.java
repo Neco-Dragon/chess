@@ -9,9 +9,13 @@ import java.util.Objects;
  * methods.
  */
 public class UserGameCommand {
+    protected CommandType commandType;
 
-    public UserGameCommand(String authToken) {
+    private final String authToken;
+
+    public UserGameCommand(String authToken, CommandType commandType) {
         this.authToken = authToken;
+        this.commandType = commandType;
     }
 
     public enum CommandType {
@@ -21,10 +25,6 @@ public class UserGameCommand {
         LEAVE,
         RESIGN
     }
-
-    protected CommandType commandType;
-
-    private final String authToken;
 
     public String getAuthString() {
         return authToken;
