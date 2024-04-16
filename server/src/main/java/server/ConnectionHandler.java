@@ -12,7 +12,12 @@ public class ConnectionHandler {
 
     public void add(int gameID, String playerName, Session session) {
         var connection = new Connection(playerName, session);
-        connections.get(gameID).add(connection);
+        var connArr =  connections.get(gameID);
+        if (connArr == null){
+            connections.put(gameID, new ArrayList<>());
+            connArr =  connections.get(gameID);
+        }
+        connArr.add(connection);
     }
     //Do I have access directly to a connection? Just a session?
     public void remove(int gameID, Connection connection) {
