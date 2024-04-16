@@ -24,7 +24,7 @@ public class MemoryGameDAO implements GameDAO{
     }
 
     @Override
-    public GameData getGame(int gameID) throws BadRequestException {
+    public GameData getGameData(int gameID) throws BadRequestException {
         return fakeGameDatabase.get(gameID);
     }
 

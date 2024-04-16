@@ -73,7 +73,7 @@ public class MySQLGameDAO implements GameDAO {
     }
 
     @Override
-    public GameData getGame(int gameID) throws DataAccessException, BadRequestException {
+    public GameData getGameData(int gameID) throws DataAccessException, BadRequestException {
         try (Connection conn = DatabaseManager.getConnection()) {
             String statement = "SELECT * FROM games WHERE gameID=?";
             try (PreparedStatement ps = conn.prepareStatement(statement)) {

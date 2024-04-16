@@ -28,7 +28,7 @@ public interface GameDAO {
      * @throws DataAccessException if an error occurs during data access
      * @throws BadRequestException if the game is not in the Database
      */
-    GameData getGame(int gameID) throws DataAccessException, BadRequestException;
+    GameData getGameData(int gameID) throws DataAccessException, BadRequestException;
 
     /**Lists all games stored in the database.
      * @return the list of game data

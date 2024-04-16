@@ -59,7 +59,7 @@ public class GameServiceTests {
         gameDAO.insertGame(testGame);
         GameData expectedGame = new GameData(1, "MyUsername", null, "myGame", chessGame);
         gameService.joinGame("AuthToken", new JoinGameRequest(ChessGame.TeamColor.WHITE, 1));
-        Assertions.assertEquals(gameDAO.getGame(1), expectedGame);
+        Assertions.assertEquals(gameDAO.getGameData(1), expectedGame);
     }
     @Test
     void joinGameFailureTest() throws DataAccessException, BadRequestException, AlreadyTakenException {

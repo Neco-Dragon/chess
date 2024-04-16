@@ -53,7 +53,7 @@ public class SQLGameDAOTests {
         gameDAO.insertGame(gameData);
 
         // Retrieve the game data
-        GameData retrievedGame = gameDAO.getGame(1);
+        GameData retrievedGame = gameDAO.getGameData(1);
 
         // Ensure the retrieved game data is not null
         Assertions.assertNotNull(retrievedGame);
@@ -65,7 +65,7 @@ public class SQLGameDAOTests {
 
     @Test
     public void testGetNonExistingGame() throws Exception {
-        gameDAO.getGame(9999);
+        gameDAO.getGameData(9999);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class SQLGameDAOTests {
 
         gameDAO.joinGame(1, ChessGame.TeamColor.WHITE, "whiteUser2");
         //retrieve the game after joining
-        GameData joinedGame = gameDAO.getGame(1);
+        GameData joinedGame = gameDAO.getGameData(1);
         Assertions.assertEquals("whiteUser2", joinedGame.whiteUsername());
     }
     @Test

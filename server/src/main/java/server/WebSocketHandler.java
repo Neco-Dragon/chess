@@ -1,12 +1,14 @@
 package server;
 
 import Exceptions.*;
+import chess.ChessGame;
 import com.google.gson.Gson;
 import dataAccess.*;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import webSocketMessages.serverMessages.LoadGame;
+import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userGameCommands.*;
 
 import java.io.IOException;
@@ -48,16 +50,18 @@ public class WebSocketHandler {
 
     private void joinPlayerService(Session session, String message) throws IOException {
         try {
+            //Root Client sends JOIN_PLAYER
             JoinPlayer joinPlayer = new Gson().fromJson(message, JoinPlayer.class);
 
-            //This is not how to initialize loadGame
-            LoadGame loadGame = new Gson().fromJson(joinPlayer.toString(), LoadGame.class);
-            //Session is the connection. It represents a client.
-            broadcast("Placeholder", message, 0); //Notification Message
-            //Root Client sends JOIN_PLAYER
+            //Access the Data
+            String username = this.authDAO.getUsername(joinPlayer.getAuthString());
+            ChessGame game = this.gameDAO.getGameData(joinPlayer.gameID).game();
+            LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, game);
+
             //Server sends a LOAD_GAME message back to the root client.
+            send(session, loadGame.toString()); //TODO: What is the message part that we send?
             //Server sends a Notification message to all other clients in that game informing them what color the root client is joining as.
-            send(session, message); //LoadGame Message
+            broadcast(username, message, 0); //Notification Message
 
         } catch (Exception e){
             send(session, new Gson().toJson(new Error(e.getMessage())));
@@ -67,6 +71,14 @@ public class WebSocketHandler {
     private void joinObserverService(Session session, String message) throws IOException {
         try {
             JoinObserver joinObserver = new Gson().fromJson(message, JoinObserver.class);
+            if (authDAO.getAuth(joinObserver.getAuthString()) == null){
+                throw new UnauthorizedException("Bad auth token");
+            }
+            if (gameDAO.getGameData(joinObserver.gameID) == null){
+                throw new DataAccessException("No such game");
+            }
+            LoadGame loadGame =
+            this.send(session, );
             //connectionHandler.add();
         } catch (Exception e){
             send(session, new Gson().toJson(new Error(e.getMessage())));

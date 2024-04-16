@@ -28,7 +28,7 @@ public class ClearServiceTests {
         UserData testUser = new UserData("MyUsername", "1234", "My@email.com");
         userDAO.createUser(testUser);
         service.clear();
-        Assertions.assertNull(gameDAO.getGame(testGame.gameID()));
+        Assertions.assertNull(gameDAO.getGameData(testGame.gameID()));
         Assertions.assertNull(authDAO.getAuth(testAuth.authToken()));
         Assertions.assertNull(userDAO.getUserData(testUser.username()));
     }
