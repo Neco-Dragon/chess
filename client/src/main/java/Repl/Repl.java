@@ -15,7 +15,7 @@ public class Repl {
         LOGGED_OUT
     }
     private final ServerFacade facade;
-    //TODOAdd a Websocket Facade
+    //Add a Websocket Facade
 
     private LoginState loginState = LoginState.LOGGED_OUT;
     private Boolean runProgram = Boolean.TRUE;
@@ -38,7 +38,7 @@ public class Repl {
             while (loginState == LoginState.LOGGED_IN){
                 loggedInLoop();
             }
-            //TODOGo to a gameplay UI loop which will call
+            //Go to a gameplay UI loop which will call
         }
     }
 

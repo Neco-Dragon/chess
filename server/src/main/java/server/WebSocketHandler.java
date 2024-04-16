@@ -50,7 +50,7 @@ public class WebSocketHandler {
         try {
             JoinPlayer joinPlayer = new Gson().fromJson(message, JoinPlayer.class);
 
-            //TODOThis is not how to initialize loadGame
+            //This is not how to initialize loadGame
             LoadGame loadGame = new Gson().fromJson(joinPlayer.toString(), LoadGame.class);
             //Session is the connection. It represents a client.
             broadcast("Placeholder", message, 0); //Notification Message

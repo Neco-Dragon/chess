@@ -143,9 +143,9 @@ public class ServerFacade {
 
     private HttpURLConnection makeRequest(String urlStub, String requestType, Boolean hasBody, Object bodyData) throws Exception {
         // Specify the desired endpoint
-        URI uri = new URI("http://localhost:" + this.port + urlStub); //TODOChange for each connection
+        URI uri = new URI("http://localhost:" + this.port + urlStub); //Change for each connection
         HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
-        http.setRequestMethod(requestType); //TODOChange for each connection
+        http.setRequestMethod(requestType); //Change for each connection
 
         if (authToken != null){
             http.setRequestProperty("authorization", authToken);
@@ -183,34 +183,33 @@ public class ServerFacade {
     public static void printBoard(ChessBoard board) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("    a  b  c  d  e  f  g  h \n");
-        for (int rank = 1; rank <= 8; rank++) {
-            stringBuilder.append(" ").append(rank).append(" ");
-            for (int col = 1; col <= 8; col++) {
-                if ((rank + col) % 2 == 1) {
-                    stringBuilder.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
-                } else {stringBuilder.append(EscapeSequences.SET_BG_COLOR_WHITE);}
-                ChessPiece p = board.getPiece(rank, col);
-                stringBuilder.append(p == null ? "   " : " ").append(p).append(" ");}
-            stringBuilder.append(EscapeSequences.RESET_BG_COLOR).append("\n");
-        }
-        System.out.println(stringBuilder);
+        printBoardHelper(board, stringBuilder, 1, 8);
     }
 
     public static void printBoardUpsideDown(ChessBoard board) {
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("    h  g  f  e  d  c  b  a \n");
-        for (int rank = 8; rank >= 1; rank--) {
+        printBoardHelper(board, stringBuilder, 8, 1);
+    }
+    private static void printBoardHelper(ChessBoard board, StringBuilder stringBuilder, int startIndex, int endIndex) {
+        int forwardOrBackward = endIndex < startIndex ? -1 : 1; //If we're going backwards, set the step size to backwards
+
+        for (int rank = startIndex; rank != endIndex + forwardOrBackward; rank += forwardOrBackward) {
             stringBuilder.append(" ").append(rank).append(" ");
-            for (int col = 8; col >= 1; col--) {
+            for (int col = startIndex; col != endIndex + forwardOrBackward; col += forwardOrBackward) {
                 if ((rank + col) % 2 == 1) {
                     stringBuilder.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
-                } else {stringBuilder.append(EscapeSequences.SET_BG_COLOR_WHITE);}
+                } else {
+                    stringBuilder.append(EscapeSequences.SET_BG_COLOR_WHITE);
+                }
                 ChessPiece p = board.getPiece(rank, col);
-                stringBuilder.append(p == null ? "   " : " ").append(p).append(" ");}
+                stringBuilder.append(p == null ? "   " : " ").append(p).append(" ");
+            }
             stringBuilder.append(EscapeSequences.RESET_BG_COLOR).append("\n");
         }
         System.out.println(stringBuilder);
     }
+
 
     public static ChessBoard getBoard(int gameID){
         ChessBoard board = new ChessBoard();
