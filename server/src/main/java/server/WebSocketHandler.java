@@ -3,6 +3,7 @@ package server;
 import Exceptions.*;
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataAccess.*;
 import model.GameData;
@@ -140,12 +141,15 @@ public class WebSocketHandler {
             MakeMove makeMove = new Gson().fromJson(message, MakeMove.class);
 
             //Access the Data
-            ChessMove chessMove = makeMove.chessMove;
+            //TODO: ChessMove is returning a null value
+            ChessMove chessMove = makeMove.getChessMove();
             int gameID = makeMove.gameID;
             GameData gameData = gameDAO.getGameData(gameID);
             String username = authDAO.getUsername(makeMove.getAuthString());
 
-            //DATA VALIDATION
+            if (chessMove == null){
+                throw new DataAccessException("Move was not retrieved from client message");
+            }
 
             //Fulfill the request.
             gameData.game().makeMove(chessMove);
@@ -175,43 +179,59 @@ public class WebSocketHandler {
     }
     private void resignService(Session session, String message) throws IOException {
         try {
-            //Root Client sends USERGAMECOMMAND
-            JoinObserver joinObserver = new Gson().fromJson(message, JoinObserver.class);
+            //Root Client sends RESIGN
+            Resign resign = new Gson().fromJson(message, Resign.class);
 
             //Access the Data
+            String username = authDAO.getUsername(resign.getAuthString());
+            ChessGame game = gameDAO.getGameData(resign.gameID).game();
 
             //DATA VALIDATION
+            if (username == null){
+                throw new UnauthorizedException("Bad Auth Token");
+            }
+            if (game == null){
+                throw new DataAccessException("No such gameID");
+            }
 
             //Fulfill the request.
-
-            //add user to the session
-
+            //TODO: What's the expected behavior of resignation?
+            //TODO: Disallow all other moves. Empty the board?
             //Create the messages
+            Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has resigned the game");
 
-            //Server sends a LOAD_GAME message back to the root client.
-            //Server sends a Notification message to all other clients in that the root client joined as an observer.
-
+            //Server sends a Notification message to all clients in that game informing them that the root client resigned. This applies to both players and observers.
+            broadcast("", new Gson().toJson(notification), resign.gameID);
         } catch (Exception e){
             send(session, new Gson().toJson(new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage())));
         }
     }
     private void leaveService(Session session, String message) throws IOException {
         try {
-            //Root Client sends USERGAMECOMMAND
-            JoinObserver joinObserver = new Gson().fromJson(message, JoinObserver.class);
+            //Root Client sends LEAVE
+            Leave leave = new Gson().fromJson(message, Leave.class);
 
             //Access the Data
+            String username = authDAO.getUsername(leave.getAuthString());
+            ChessGame game = gameDAO.getGameData(leave.gameID).game();
 
             //DATA VALIDATION
+            if (username == null){
+                throw new UnauthorizedException("Bad Auth Token");
+            }
+            if (game == null){
+                throw new DataAccessException("No such gameID");
+            }
 
-            //Fulfill the request.
-
-            //add user to the session
+            //remove the user from the session
+            //TODO: leaveService does not see a connection, but connection is required 2nd argument
+            connectionHandler.remove(leave.gameID, new Connection("", session));
 
             //Create the messages
+            Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has left the session.");
 
-            //Server sends a LOAD_GAME message back to the root client.
-            //Server sends a Notification message to all other clients in that the root client joined as an observer.
+            //Server sends a notification back to all users that the client has left that session.
+            broadcast("", new Gson().toJson(notification), leave.gameID);
 
         } catch (Exception e){
             send(session, new Gson().toJson(new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage())));
