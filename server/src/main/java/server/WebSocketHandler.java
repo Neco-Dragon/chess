@@ -11,11 +11,13 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import webSocketMessages.serverMessages.LoadGame;
 import webSocketMessages.serverMessages.Notification;
+import webSocketMessages.serverMessages.Error;
 import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userGameCommands.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 @WebSocket
 public class WebSocketHandler {
@@ -60,8 +62,24 @@ public class WebSocketHandler {
             String username = this.authDAO.getUsername(joinPlayer.getAuthString());
             GameData gameData = this.gameDAO.getGameData(joinPlayer.gameID);
             int gameID = gameData.gameID();
+            ChessGame.TeamColor teamColor = joinPlayer.playerColor;
 
-            //TODO: Data validation
+            if (username == null){
+                throw new UnauthorizedException("Bad Auth Token");
+            }
+            if (gameData.game() == null){
+                throw new DataAccessException("No such game ID");
+            }
+            if (teamColor == ChessGame.TeamColor.WHITE){
+                if (!Objects.equals(gameData.whiteUsername(), username)){ //TODO: This disallows users to enter a game even if there's a null username, but that's okay since the HTTP request should join the game for them already
+                    throw new DataAccessException("White player already taken");
+                }
+            }
+            if (teamColor == ChessGame.TeamColor.BLACK){
+                if (!Objects.equals(gameData.blackUsername(), username)){
+                    throw new DataAccessException("Black player already taken");
+                }
+            }
 
             //add user to the session
             connectionHandler.add(gameID, username, session);
@@ -71,12 +89,12 @@ public class WebSocketHandler {
             Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " joined as " + joinPlayer.playerColor.toString());
 
             //Server sends a LOAD_GAME message back to the root client.
-            send(session, new Gson().toJson(loadGame)); //TODO: What is the message part that we send?
+            send(session, new Gson().toJson(loadGame));
             //Server sends a Notification message to all other clients in that game informing them what color the root client is joining as.
-            broadcast(username, new Gson().toJson(notification), gameData.gameID()); //TODO: 2 arg correct?
+            broadcast(username, new Gson().toJson(notification), gameData.gameID());
 
         } catch (Exception e){
-            send(session, new Gson().toJson(new Error(e.getMessage())));
+            send(session, new Gson().toJson(new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage())));
         }
 
     }
@@ -113,7 +131,7 @@ public class WebSocketHandler {
             broadcast(username, new Gson().toJson(notification), gameData.gameID());
 
         } catch (Exception e){
-            send(session, new Gson().toJson(new Error(e.getMessage())));
+            send(session, new Gson().toJson(new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage())));
         }
     }
     private void makeMoveService(Session session, String message) throws IOException {
@@ -152,7 +170,7 @@ public class WebSocketHandler {
             }
 
         } catch (Exception e){
-            send(session, new Gson().toJson(new Error(e.getMessage())));
+            send(session, new Gson().toJson(new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage())));
         }
     }
     private void resignService(Session session, String message) throws IOException {
@@ -174,7 +192,7 @@ public class WebSocketHandler {
             //Server sends a Notification message to all other clients in that the root client joined as an observer.
 
         } catch (Exception e){
-            send(session, new Gson().toJson(new Error(e.getMessage())));
+            send(session, new Gson().toJson(new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage())));
         }
     }
     private void leaveService(Session session, String message) throws IOException {
@@ -196,7 +214,7 @@ public class WebSocketHandler {
             //Server sends a Notification message to all other clients in that the root client joined as an observer.
 
         } catch (Exception e){
-            send(session, new Gson().toJson(new Error(e.getMessage())));
+            send(session, new Gson().toJson(new Error(ServerMessage.ServerMessageType.ERROR, e.getMessage())));
         }
     }
 
