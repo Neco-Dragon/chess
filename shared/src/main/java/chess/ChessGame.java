@@ -15,8 +15,13 @@ import java.util.HashSet;
 public class ChessGame {
     private TeamColor teamTurn;
     private ChessBoard board;
+
+    private boolean isOver;
     public ChessGame() {
         this.board = new ChessBoard();
+        board.resetBoard();
+        this.teamTurn = TeamColor.WHITE;
+        this.isOver = false; //TODO: Fisnish
     }
 
     public ChessGame(ChessBoard boardState) {

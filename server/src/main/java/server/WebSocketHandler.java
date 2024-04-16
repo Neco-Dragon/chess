@@ -3,7 +3,6 @@ package server;
 import Exceptions.*;
 import chess.ChessGame;
 import chess.ChessMove;
-import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataAccess.*;
 import model.GameData;
@@ -142,7 +141,7 @@ public class WebSocketHandler {
 
             //Access the Data
             //TODO: ChessMove is returning a null value
-            ChessMove chessMove = makeMove.getChessMove();
+            ChessMove chessMove = makeMove.getMove();
             int gameID = makeMove.gameID;
             GameData gameData = gameDAO.getGameData(gameID);
             String username = authDAO.getUsername(makeMove.getAuthString());
@@ -153,18 +152,17 @@ public class WebSocketHandler {
 
             //Fulfill the request.
             gameData.game().makeMove(chessMove);
-            GameData newGameData = gameDAO.getGameData(gameID);
-            boolean checkmate = newGameData.game().isInCheckmate(ChessGame.TeamColor.BLACK) || newGameData.game().isInCheckmate(ChessGame.TeamColor.WHITE);
-            boolean check = newGameData.game().isInCheck(ChessGame.TeamColor.BLACK) || newGameData.game().isInCheck(ChessGame.TeamColor.WHITE);
+            boolean checkmate = gameData.game().isInCheckmate(ChessGame.TeamColor.BLACK) || gameData.game().isInCheckmate(ChessGame.TeamColor.WHITE);
+            boolean check = gameData.game().isInCheck(ChessGame.TeamColor.BLACK) || gameData.game().isInCheck(ChessGame.TeamColor.WHITE);
 
             //Create the messages
             LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
             Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, chessMove.toString());
 
             //Server sends a LOAD_GAME message to all clients in the game (including the root client) with an updated game.
-            broadcast("", loadGame.toString(), gameID);
+            broadcast("", new Gson().toJson(loadGame), gameID);
             //Server sends a Notification message to all other clients in that game informing them what move was made.
-            broadcast(username, notification.getMessage(), gameID);
+            broadcast(username, new Gson().toJson(notification), gameID);
 
             //If the move results in check or checkmate the server sends a Notification message to all clients.
             if (checkmate){
@@ -225,7 +223,7 @@ public class WebSocketHandler {
 
             //remove the user from the session
             //TODO: leaveService does not see a connection, but connection is required 2nd argument
-            connectionHandler.remove(leave.gameID, new Connection("", session));
+            connectionHandler.remove(leave.gameID, new Connection(username, session));
 
             //Create the messages
             Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has left the session.");
