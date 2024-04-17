@@ -190,9 +190,9 @@ public class WebSocketHandler {
             if (checkmate){
                 gameData.game().setOver(true);
                 gameDAO.updateGame(gameData); //End the game
-                broadcast("", "This puts the opponent in CHECKMATE!", gameID);
+                broadcast("", new Gson().toJson(new Notification(ServerMessage.ServerMessageType.NOTIFICATION, "This puts the opponent in CHECKMATE!")), gameID);
             } else if (check) {
-                broadcast("", "This puts the opponent in CHECK!", gameID);
+                broadcast("", new Gson().toJson(new Notification(ServerMessage.ServerMessageType.NOTIFICATION, "This puts the opponent in CHECK!")), gameID);
             }
 
         } catch (Exception e){
@@ -215,12 +215,16 @@ public class WebSocketHandler {
             if (gameData.game() == null){
                 throw new DataAccessException("No such gameID");
             }
+            if (!(username.equals(gameData.whiteUsername()) || username.equals(gameData.blackUsername()))){
+                throw new Exception("You cannot resign if you are not playing");
+            }
             if (gameData.game().isOver()){
-                throw new Exception("The game is already over, you cannot resign");
+                throw new Exception("This game has already ended");
             }
 
+
             //Fulfill the request.
-            gameData.game().setOver(false); //End the game
+            gameData.game().setOver(true); //End the game
             gameDAO.updateGame(gameData); //End the game
 
             //Create the messages
