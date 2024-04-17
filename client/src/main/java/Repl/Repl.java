@@ -3,6 +3,7 @@ package Repl;
 import RequestClasses.*;
 import ServerFacade.ServerFacade;
 import Websocket.WebSocketFacade;
+import chess.ChessBoard;
 import chess.ChessGame;
 
 import java.util.Arrays;
@@ -19,7 +20,9 @@ public class Repl {
     private final ServerFacade facade;
     private WebSocketFacade socketFacade;
 
-    private Repl.Repl.ReplState replState = ReplState.LOGGED_OUT;
+    private ChessBoard mostRecentBoard = new ChessBoard();
+
+    private ReplState replState = ReplState.LOGGED_OUT;
     private Boolean runProgram = Boolean.TRUE;
     private final Scanner scanner = new Scanner(System.in);
 
@@ -139,6 +142,10 @@ public class Repl {
                 break;
             case ("createGame"):
                 try {
+                    if (params.length != 1){
+                        System.out.println("Please enter only one extra parameter with the createGame command");
+                        break;
+                    }
                     facade.createGame(new CreateGameRequest(params[0]));
                     System.out.println("Game creation successful. Type listGames to see your game. Type joinGame to join.");
                 }
@@ -239,14 +246,8 @@ public class Repl {
                 System.out.println(help());
                 break;
             case ("redrawChessBoard"):
-                try{
-                    socketFacade.(new LogoutRequest(facade.authToken()));
-                    replState = ReplState.LOGGED_OUT;
-                    System.out.println("Logout successful. You are now logged out.");
-                }
-                catch (Exception e){
-                    System.out.println(e.getMessage());
-                }
+                ChessBoard.printBoard(mostRecentBoard);
+                ChessBoard.printBoardUpsideDown(mostRecentBoard);
                 break;
             case ("leave"):
                 break;

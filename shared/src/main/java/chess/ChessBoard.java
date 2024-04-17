@@ -27,6 +27,7 @@ public class ChessBoard {
 
     public ChessBoard() {
         this.board = new ChessPiece[8][8];
+        resetBoard();
     }
 
     /**
@@ -141,6 +142,44 @@ public class ChessBoard {
     }
     public ChessPiece getPiece(int rank, int file){
         return board[rank - 1][file - 1];
+    }
+    public static void printBoard(ChessBoard board) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(EscapeSequences.RESET_BG_COLOR);
+        stringBuilder.append("    a  b  c  d  e  f  g  h \n");
+        printBoardHelper(board, stringBuilder, false);
+    }
+
+    public static void printBoardUpsideDown(ChessBoard board) {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append(EscapeSequences.RESET_BG_COLOR);
+        stringBuilder.append("    h  g  f  e  d  c  b  a \n");
+        printBoardHelper(board, stringBuilder, true);
+    }
+    private static void printBoardHelper(ChessBoard board, StringBuilder stringBuilder, boolean backwards) {
+        int rankDirection = backwards ? 1 : -1; //If we're going backwards, set the step size to backwards
+        int fileDirection = backwards ? -1 : 1;
+        int endRank = backwards ? 9 : 0;
+        int endFile = backwards ? 0 : 9;
+        for (int rank = backwards ? 1 : 8; rank != endRank; rank += rankDirection) {
+            stringBuilder.append(" ").append(rank).append(" ");
+            for (int file = backwards ? 8 : 1; file != endFile; file += fileDirection) {
+                if ((rank + file) % 2 == 0) {
+                    stringBuilder.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
+                } else {
+                    stringBuilder.append(EscapeSequences.SET_BG_COLOR_WHITE);
+                }
+                ChessPiece p = board.getPiece(rank, file);
+                if (p == null){
+                    stringBuilder.append("   ");
+                } else{
+                    stringBuilder.append(" ").append(p).append(" ");
+                }
+
+            }
+            stringBuilder.append(EscapeSequences.RESET_BG_COLOR).append("\n");
+        }
+        System.out.println(stringBuilder);
     }
 
 }

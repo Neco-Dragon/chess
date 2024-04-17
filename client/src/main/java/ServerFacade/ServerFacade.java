@@ -17,6 +17,9 @@ import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.ArrayList;
 
+import static chess.ChessBoard.printBoard;
+import static chess.ChessBoard.printBoardUpsideDown;
+
 public class ServerFacade {
     private final int port;
     public String authToken;
@@ -179,37 +182,6 @@ public class ServerFacade {
         }
         return stringBuilder.toString();
     }
-
-    public static void printBoard(ChessBoard board) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("    a  b  c  d  e  f  g  h \n");
-        printBoardHelper(board, stringBuilder, 1, 8);
-    }
-
-    public static void printBoardUpsideDown(ChessBoard board) {
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("    h  g  f  e  d  c  b  a \n");
-        printBoardHelper(board, stringBuilder, 8, 1);
-    }
-    private static void printBoardHelper(ChessBoard board, StringBuilder stringBuilder, int startIndex, int endIndex) {
-        int forwardOrBackward = endIndex < startIndex ? -1 : 1; //If we're going backwards, set the step size to backwards
-
-        for (int rank = startIndex; rank != endIndex + forwardOrBackward; rank += forwardOrBackward) {
-            stringBuilder.append(" ").append(rank).append(" ");
-            for (int col = startIndex; col != endIndex + forwardOrBackward; col += forwardOrBackward) {
-                if ((rank + col) % 2 == 1) {
-                    stringBuilder.append(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
-                } else {
-                    stringBuilder.append(EscapeSequences.SET_BG_COLOR_WHITE);
-                }
-                ChessPiece p = board.getPiece(rank, col);
-                stringBuilder.append(p == null ? "   " : " ").append(p).append(" ");
-            }
-            stringBuilder.append(EscapeSequences.RESET_BG_COLOR).append("\n");
-        }
-        System.out.println(stringBuilder);
-    }
-
 
     public static ChessBoard getBoard(int gameID){
         ChessBoard board = new ChessBoard();

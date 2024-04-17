@@ -1,7 +1,6 @@
 package Websocket;
 
 import com.google.gson.Gson;
-import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import webSocketMessages.serverMessages.LoadGame;
@@ -10,15 +9,12 @@ import webSocketMessages.serverMessages.ServerMessage;
 import webSocketMessages.userGameCommands.Leave;
 import webSocketMessages.userGameCommands.UserGameCommand;
 
-import javax.websocket.ContainerProvider;
-import javax.websocket.MessageHandler;
-import javax.websocket.WebSocketContainer;
+import javax.websocket.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 
-@WebSocket
-public class WebSocketFacade {
+public class WebSocketFacade extends Endpoint {
 
     public javax.websocket.Session session;
 
@@ -39,6 +35,11 @@ public class WebSocketFacade {
             }
         });
         }
+
+    @Override
+    public void onOpen(Session session, EndpointConfig endpointConfig) {
+        return;
+    }
 
 
     private void errorService(String message) {
