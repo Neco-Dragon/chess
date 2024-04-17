@@ -55,4 +55,9 @@ public class MemoryGameDAO implements GameDAO{
         return fakeGameDatabase.size();
     }
 
+    @Override
+    public void updateGame(GameData gameData) {
+        return;
+    }
+
 }

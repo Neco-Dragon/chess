@@ -6,7 +6,6 @@ import Exceptions.DataAccessException;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
-import model.AuthData;
 import model.GameData;
 
 import java.sql.Connection;
@@ -14,9 +13,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Random;
-
-import static java.sql.Types.NULL;
 
 public class MySQLGameDAO implements GameDAO {
 
@@ -143,6 +139,19 @@ public class MySQLGameDAO implements GameDAO {
             throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()));
         }
         return 0; // Return 0 if there's an error or no records found
+    }
+
+    @Override
+    public void updateGame(GameData gameData) throws DataAccessException, SQLException {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            try (var preparedStatement = conn.prepareStatement("UPDATE game SET game=? WHERE gameID=?")) {
+                preparedStatement.setObject(1, gameData.game());
+                preparedStatement.setInt(2, gameData.gameID());
+                preparedStatement.executeUpdate();
+            } catch (SQLException ex) {
+                throw new DataAccessException(String.format("Unable to read data: %s", ex.getMessage()));
+            }
+        }
     }
 
     private GameData readGameData(ResultSet rs) throws SQLException {

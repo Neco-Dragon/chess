@@ -6,6 +6,7 @@ import Exceptions.DataAccessException;
 import chess.ChessGame;
 import model.GameData;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public interface GameDAO {
@@ -44,4 +45,5 @@ public interface GameDAO {
 
     void joinGame(int gameID, ChessGame.TeamColor clientColor, String clientUsername) throws BadRequestException, DataAccessException, AlreadyTakenException;
     int getSize() throws DataAccessException;
+    void updateGame(GameData gameData) throws DataAccessException, SQLException;
 }

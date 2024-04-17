@@ -3,6 +3,8 @@ package server;
 import Exceptions.*;
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataAccess.*;
 import model.GameData;
@@ -18,6 +20,9 @@ import webSocketMessages.userGameCommands.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
+
+import static chess.ChessGame.TeamColor.BLACK;
+import static chess.ChessGame.TeamColor.WHITE;
 
 @WebSocket
 public class WebSocketHandler {
@@ -70,7 +75,7 @@ public class WebSocketHandler {
             if (gameData.game() == null){
                 throw new DataAccessException("No such game ID");
             }
-            if (teamColor == ChessGame.TeamColor.WHITE){
+            if (teamColor == WHITE){
                 if (!Objects.equals(gameData.whiteUsername(), username)){ //TODO: This disallows users to enter a game even if there's a null username, but that's okay since the HTTP request should join the game for them already
                     throw new DataAccessException("White player already taken");
                 }
@@ -140,20 +145,37 @@ public class WebSocketHandler {
             MakeMove makeMove = new Gson().fromJson(message, MakeMove.class);
 
             //Access the Data
-            //TODO: ChessMove is returning a null value
             ChessMove chessMove = makeMove.getMove();
             int gameID = makeMove.gameID;
             GameData gameData = gameDAO.getGameData(gameID);
             String username = authDAO.getUsername(makeMove.getAuthString());
+            ChessGame.TeamColor playerColor = null;
 
-            if (chessMove == null){
-                throw new DataAccessException("Move was not retrieved from client message");
+            if (Objects.equals(gameData.whiteUsername(), username)){
+                playerColor = WHITE;
+            } else if (Objects.equals(gameData.blackUsername(), username)) {
+                playerColor = BLACK;
+            }
+            if (playerColor == null){
+                throw new InvalidMoveException("You cannot move pieces if you are observing\"");
+            }
+
+            ChessPiece pieceToMove = gameData.game().getBoard().getPiece(chessMove.getStartPosition());
+            if (pieceToMove == null){
+                throw new InvalidMoveException("That move is invalid");
+            }
+            if (!pieceToMove.sameTeam(playerColor)){
+                throw new InvalidMoveException("You cannot move pieces that aren't yours");
+            }
+            if (gameData.game().isOver()){
+                throw new Exception("This game has already ended");
             }
 
             //Fulfill the request.
             gameData.game().makeMove(chessMove);
-            boolean checkmate = gameData.game().isInCheckmate(ChessGame.TeamColor.BLACK) || gameData.game().isInCheckmate(ChessGame.TeamColor.WHITE);
-            boolean check = gameData.game().isInCheck(ChessGame.TeamColor.BLACK) || gameData.game().isInCheck(ChessGame.TeamColor.WHITE);
+            gameDAO.updateGame(gameData);
+            boolean checkmate = gameData.game().isInCheckmate(ChessGame.TeamColor.BLACK) || gameData.game().isInCheckmate(WHITE);
+            boolean check = gameData.game().isInCheck(ChessGame.TeamColor.BLACK) || gameData.game().isInCheck(WHITE);
 
             //Create the messages
             LoadGame loadGame = new LoadGame(ServerMessage.ServerMessageType.LOAD_GAME, gameData.game());
@@ -166,6 +188,8 @@ public class WebSocketHandler {
 
             //If the move results in check or checkmate the server sends a Notification message to all clients.
             if (checkmate){
+                gameData.game().setOver(true);
+                gameDAO.updateGame(gameData); //End the game
                 broadcast("", "This puts the opponent in CHECKMATE!", gameID);
             } else if (check) {
                 broadcast("", "This puts the opponent in CHECK!", gameID);
@@ -182,19 +206,23 @@ public class WebSocketHandler {
 
             //Access the Data
             String username = authDAO.getUsername(resign.getAuthString());
-            ChessGame game = gameDAO.getGameData(resign.gameID).game();
+            GameData gameData = gameDAO.getGameData(resign.gameID);
 
             //DATA VALIDATION
             if (username == null){
                 throw new UnauthorizedException("Bad Auth Token");
             }
-            if (game == null){
+            if (gameData.game() == null){
                 throw new DataAccessException("No such gameID");
+            }
+            if (gameData.game().isOver()){
+                throw new Exception("The game is already over, you cannot resign");
             }
 
             //Fulfill the request.
-            //TODO: What's the expected behavior of resignation?
-            //TODO: Disallow all other moves. Empty the board?
+            gameData.game().setOver(false); //End the game
+            gameDAO.updateGame(gameData); //End the game
+
             //Create the messages
             Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has resigned the game");
 
@@ -222,8 +250,7 @@ public class WebSocketHandler {
             }
 
             //remove the user from the session
-            //TODO: leaveService does not see a connection, but connection is required 2nd argument
-            connectionHandler.remove(leave.gameID, new Connection(username, session));
+           connectionHandler.remove(leave.gameID, new Connection(username, session));
 
             //Create the messages
             Notification notification = new Notification(ServerMessage.ServerMessageType.NOTIFICATION, username + " has left the session.");

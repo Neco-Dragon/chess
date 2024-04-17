@@ -21,7 +21,7 @@ public class ChessGame {
         this.board = new ChessBoard();
         board.resetBoard();
         this.teamTurn = TeamColor.WHITE;
-        this.isOver = false; //TODO: Fisnish
+        this.isOver = false;
     }
 
     public ChessGame(ChessBoard boardState) {
@@ -204,4 +204,12 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {return this.board;}
+
+    public boolean isOver() {
+        return isOver;
+    }
+
+    public void setOver(boolean over) {
+        isOver = over;
+    }
 }
