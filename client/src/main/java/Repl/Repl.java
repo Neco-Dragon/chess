@@ -2,6 +2,7 @@ package Repl;
 
 import RequestClasses.*;
 import ServerFacade.ServerFacade;
+import Websocket.WebSocketFacade;
 import chess.ChessGame;
 
 import java.util.Arrays;
@@ -10,19 +11,23 @@ import ServerFacade.*;
 
 public class Repl {
 
-    private enum LoginState {
+    private enum ReplState {
         LOGGED_IN,
-        LOGGED_OUT
+        LOGGED_OUT,
+        IN_GAME
     }
     private final ServerFacade facade;
-    //Add a Websocket Facade
+    private WebSocketFacade socketFacade;
 
-    private LoginState loginState = LoginState.LOGGED_OUT;
+    private Repl.Repl.ReplState replState = ReplState.LOGGED_OUT;
     private Boolean runProgram = Boolean.TRUE;
     private final Scanner scanner = new Scanner(System.in);
 
-    public Repl(String serverUrl) {
-        facade = new ServerFacade(8080);
+    //TODO: Save the most recent loaded game;
+
+    public Repl(String serverUrl) throws Exception {
+        this.socketFacade = new WebSocketFacade();
+        this.facade = new ServerFacade(8080);
     }
 
     public void run() throws Exception {
@@ -31,14 +36,17 @@ public class Repl {
             System.out.println(help());
 
             //Main Logged Out Loop
-            while (loginState == LoginState.LOGGED_OUT){
+            while (replState == ReplState.LOGGED_OUT){
                 loggedOutLoop();
             }
             //Main Logged In Loop
-            while (loginState == LoginState.LOGGED_IN){
+            while (replState == ReplState.LOGGED_IN){
                 loggedInLoop();
             }
-            //Go to a gameplay UI loop which will call
+            //Game UI Loop
+            while (replState == ReplState.IN_GAME){
+                inGameLoop();
+            }
         }
     }
 
@@ -56,7 +64,7 @@ public class Repl {
     }
 
     public String help(){
-        if (this.loginState == LoginState.LOGGED_OUT){
+        if (this.replState == ReplState.LOGGED_OUT){
             return """
         Please type one of the following commands:
     
@@ -71,7 +79,7 @@ public class Repl {
     """;
 
         }
-        else{
+        if (this.replState == ReplState.LOGGED_IN){
             return """
         Please type one of the following commands:
     
@@ -90,17 +98,39 @@ public class Repl {
             - Print this menu again.
     """;
         }
+        else{
+            return """
+        Please type one of the following commands:
+    
+        highlightLegalMoves <(SquareContainingPiece)>
+            - Shows the legal moves of the chess piece on the current square as if it were that players turn.
+        makeMove <(startingSquare)> <(EndingSquare)>
+            - Performs the desired move on the chess board and updates the database accordingly.
+        redrawChessBoard
+            - Prints out the current state of the board. 
+            - Does not show who's turn it is or if the game is over.
+        resign
+            - Resigns and ends the game.
+            - Does not make you leave.
+        leave
+            - Leave the gave you're in.
+            - Does not make you forfeit.
+        help
+            - Print this menu again.
+    """;
+        }
     }
 
     private void loggedInLoop() throws Exception {
         var tokens = scanner.nextLine().split(" ");
+
         var cmd = (tokens.length > 0) ? tokens[0] : "help";
         var params = Arrays.copyOfRange(tokens, 1, tokens.length);
         switch (cmd) {
             case ("logout"):
                 try{
                     facade.logout(new LogoutRequest(facade.authToken));
-                    loginState = LoginState.LOGGED_OUT;
+                    replState = ReplState.LOGGED_OUT;
                     System.out.println("Logout successful. You are now logged out.");
                 }
                 catch (Exception e){
@@ -134,11 +164,15 @@ public class Repl {
                     if (params.length == 1){ //Join as observer
                         facade.joinGame(new JoinGameRequest(null, id));
                         System.out.println("Joined as an observer successfully.");
+                        this.socketFacade = new WebSocketFacade();
+                        //send a join game
+                        this.replState = ReplState.IN_GAME;
                         break;
                     }
                     ChessGame.TeamColor teamColor = getTeamColor(params[1]);
                     facade.joinGame(new JoinGameRequest(teamColor, id));
                     System.out.println("Game Join successful.");
+                    this.replState = ReplState.IN_GAME;
                     break;
                 }
                 catch (Exception e){
@@ -147,7 +181,7 @@ public class Repl {
                 break;
             case ("quit"):
                 ServerFacade.quit();
-                loginState = LoginState.LOGGED_OUT;
+                replState = ReplState.LOGGED_OUT;
                 runProgram = Boolean.FALSE;
                 break;
             case ("help"):
@@ -165,7 +199,7 @@ public class Repl {
             case "register":
                 try{
                     facade.register(new RegisterRequest(params[0], params[1], params[2]));
-                    loginState = LoginState.LOGGED_IN;
+                    replState = ReplState.LOGGED_IN;
                     System.out.println("Registration successful. You are now logged in.");
                 }
                 catch (Exception e){
@@ -175,7 +209,7 @@ public class Repl {
             case "login":
                 try{
                     facade.login(new LoginRequest(params[0], params[1]));
-                    loginState = LoginState.LOGGED_IN;
+                    replState = ReplState.LOGGED_IN;
                     System.out.println("Login successful. You are now logged in.");
                 }
                 catch (Exception e){
@@ -184,7 +218,7 @@ public class Repl {
                 break;
             case "quit":
                 ServerFacade.quit();
-                loginState = LoginState.LOGGED_OUT;
+                replState = ReplState.LOGGED_OUT;
                 runProgram = Boolean.FALSE;
                 break;
             case "help":
@@ -196,4 +230,33 @@ public class Repl {
         }
     }
 
+    private void inGameLoop() throws Exception{
+        var tokens = scanner.nextLine().split(" ");
+        var cmd = (tokens.length > 0) ? tokens[0] : "help";
+        var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+        switch (cmd){
+            case ("help"):
+                System.out.println(help());
+                break;
+            case ("redrawChessBoard"):
+                try{
+                    socketFacade.(new LogoutRequest(facade.authToken()));
+                    replState = ReplState.LOGGED_OUT;
+                    System.out.println("Logout successful. You are now logged out.");
+                }
+                catch (Exception e){
+                    System.out.println(e.getMessage());
+                }
+                break;
+            case ("leave"):
+                break;
+            case ("makeMove"):
+                break;
+            case ("resign"):
+                break;
+            case ("highlightLegalMoves"):
+                break; //This is a local operation
+            default: System.out.println("Invalid Command");
+        }
+    }
 }
